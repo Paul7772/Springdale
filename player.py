@@ -57,6 +57,7 @@ class Player(pygame.sprite.Sprite):
             sword = Sword(direction_map[self.see][0], direction_map[self.see][1], self.see)
             self.group[0].add(sword)
             self.group[1].add(sword)
+            self.speed = 0
             return sword
 
     """switch weapon"""
@@ -79,6 +80,7 @@ class Player(pygame.sprite.Sprite):
                 # self.group[0][0].kill()
                 for sword in self.group[0]:
                     sword.kill()
+                    self.speed = 2
 
     def cooldown(self, time, can, duration_cooldown):
         current_time = pygame.time.get_ticks()

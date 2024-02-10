@@ -19,9 +19,11 @@ pygame.init()
 W, H = 1324, 900
 
 WHITE = (255, 255, 255)
-GREEN = (0, 179, 0)
+GREEN = (0, 189, 0)
 
 FPS = 120
+"""Music"""
+pygame.mixer.music.load('Sound/Music.ogg')
 
 """font"""
 pygame.font.init()
@@ -82,7 +84,7 @@ def check_hit(obj1, obj2, class_obj2):
 #     screen.blit(start_game_button, (410, 250))
 #     screen.blit(start_game_text, (495, 380))
 #     pygame.display.flip()
-
+pygame.mixer.music.play(-1)
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -101,4 +103,3 @@ while True:
     screen.blit(health_bar(player), (15, 15))
     all_sprite.draw(screen)
     pygame.display.flip()
-
