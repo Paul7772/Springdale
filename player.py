@@ -1,0 +1,118 @@
+import pygame
+from Settings import list_weapon
+from Sword import Sword
+
+pygame.init()
+
+
+class Player(pygame.sprite.Sprite):
+    """class of the player's object """
+
+    def __init__(self, x: int, y: int, sword_group, all_sprite):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('Sprite/Game/Player/idle/idle_left/idle left1.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (38, 74))
+        self.rect = self.image.get_rect(center=(x, y))
+        self.gold = 0
+        self.speed = 2
+        self.see = 'left'
+        self.heart = 20
+        self.index_weapon = 0
+        self.weapon = list_weapon[self.index_weapon]
+        """Switch"""
+        self.can_switch_weapon = True
+        self.weapon_switch_time = None
+        self.switch_duration_cooldown = 1500
+        """attack"""
+        self.can_attack = True
+        self.attack_time = None
+        self.attack_duration_cooldown = 1000
+        self.group = (sword_group, all_sprite)
+        """break attack"""
+        self.attack_break_time = 200
+
+
+    # def walk(self, keys):
+    #     move_dict = {
+    #         pygame.K_a: lambda: self.rect.move_ip(-self.speed, 0),
+    #         pygame.K_d: lambda: self.rect.move_ip(self.speed, 0),
+    #         pygame.K_s: lambda: self.rect.move_ip(0, self.speed),
+    #         pygame.K_w: lambda: self.rect.move_ip(0, -self.speed),
+    #     }
+    #     for key, value in move_dict.items():
+    #         if keys[key]:
+    #             value()
+    #             break
+
+    def walk(self, keys):
+        if keys[pygame.K_a]:
+            self.rect.x -= self.speed
+            self.see = 'left'
+        if keys[pygame.K_d]:
+            self.rect.x += self.speed
+            self.see = 'right'
+        if keys[pygame.K_s]:
+            self.rect.y += self.speed
+            self.see = 'down'
+        if keys[pygame.K_w]:
+            self.rect.y -= self.speed
+            self.see = 'up'
+
+    def create_sword(self):
+        direction_map = {
+            'left': (self.rect.midleft[0], self.rect.midleft[1]),
+            'right': (self.rect.midright[0], self.rect.midright[1]),
+            'down': (self.rect.midbottom[0], self.rect.midbottom[1]),
+            'up': (self.rect.midtop[0], self.rect.midtop[1])}
+        if self.can_attack:
+            self.can_attack = False
+            self.attack_time = pygame.time.get_ticks()
+            sword = Sword(direction_map[self.see][0], direction_map[self.see][1], self.see)
+            self.group[0].add(sword)
+            self.group[1].add(sword)
+            return sword
+
+    """switch weapon"""
+
+    def switch_weapon(self, keys):
+        if keys[pygame.K_q] and self.can_switch_weapon:
+            self.can_switch_weapon = False
+            self.weapon_switch_time = pygame.time.get_ticks()
+            if self.index_weapon < len(list_weapon) - 1:
+                self.index_weapon += 1
+            else:
+                self.index_weapon = 0
+            self.weapon = list_weapon[self.index_weapon]
+            print(self.weapon)
+
+    def break_attack(self):
+        current_time = pygame.time.get_ticks()
+        if len(self.group[0]) > 0:
+            if current_time - self.attack_time >= self.attack_break_time:
+                # self.group[0][0].kill()
+                for sword in self.group[0]:
+                    sword.kill()
+
+    def cooldown(self, time, can, duration_cooldown):
+        current_time = pygame.time.get_ticks()
+        if not can:
+            if current_time - time >= duration_cooldown:
+                can = True
+        return can
+
+    def update(self):
+        keys = pygame.key.get_pressed()
+        mouse_keys = pygame.mouse.get_pressed()
+
+        self.walk(keys)
+        self.switch_weapon(keys)
+        self.can_switch_weapon = self.cooldown(self.weapon_switch_time, self.can_switch_weapon,
+                                               self.switch_duration_cooldown)
+        self.can_attack = self.cooldown(self.attack_time, self.can_attack, self.attack_duration_cooldown)
+        self.break_attack()
+        if mouse_keys[0]:
+            if self.weapon == 'sword':
+                self.create_sword()
+            else:
+                print('beee')
+                # weapon = create_arrow()
