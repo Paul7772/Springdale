@@ -19,6 +19,7 @@ pygame.init()
 W, H = 1324, 900
 
 WHITE = (255, 255, 255)
+GREEN = (0, 179, 0)
 
 FPS = 120
 
@@ -92,10 +93,10 @@ while True:
 
     # check_hit(mob, player, players)
     # check_hit(mob, swords[0], swords)
-    print(type(all_sprite))
+
     all_sprite.update()
     clock.tick(FPS)
-    screen.fill(WHITE)
+    screen.fill(GREEN)
     screen.blit(create_frame_health_bar(), (11, 11))
     screen.blit(health_bar(player), (15, 15))
     all_sprite.draw(screen)

@@ -31,19 +31,6 @@ class Player(pygame.sprite.Sprite):
         """break attack"""
         self.attack_break_time = 200
 
-
-    # def walk(self, keys):
-    #     move_dict = {
-    #         pygame.K_a: lambda: self.rect.move_ip(-self.speed, 0),
-    #         pygame.K_d: lambda: self.rect.move_ip(self.speed, 0),
-    #         pygame.K_s: lambda: self.rect.move_ip(0, self.speed),
-    #         pygame.K_w: lambda: self.rect.move_ip(0, -self.speed),
-    #     }
-    #     for key, value in move_dict.items():
-    #         if keys[key]:
-    #             value()
-    #             break
-
     def walk(self, keys):
         if keys[pygame.K_a]:
             self.rect.x -= self.speed
