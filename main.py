@@ -3,8 +3,8 @@
 # TODO: написать класс обменника ресурсов на деньги
 # TODO: (по возможности) написать класс нпс которые будут помогать в убийстве зомби
 # TODO: обязательно сделать анимацию
-# TODO: написать главное меню
-# TODO: (По желанию) фоновую музыку
+
+
 
 import pygame
 import random
@@ -84,7 +84,8 @@ def check_hit(obj1, obj2, class_obj2):
 #     screen.blit(start_game_button, (410, 250))
 #     screen.blit(start_game_text, (495, 380))
 #     pygame.display.flip()
-pygame.mixer.music.play(-1)
+
+# pygame.mixer.music.play(-1)
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
