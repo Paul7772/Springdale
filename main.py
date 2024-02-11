@@ -85,7 +85,7 @@ def check_hit(obj1, obj2, class_obj2):
 #     screen.blit(start_game_text, (495, 380))
 #     pygame.display.flip()
 
-# pygame.mixer.music.play(-1)
+pygame.mixer.music.play(-1)
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -96,7 +96,7 @@ while True:
 
     # check_hit(mob, player, players)
     # check_hit(mob, swords[0], swords)
-
+    pygame.mouse.set_visible(False)
     all_sprite.update()
     clock.tick(FPS)
     screen.fill(GREEN)

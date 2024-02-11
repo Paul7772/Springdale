@@ -12,7 +12,7 @@ class NPC(pygame.sprite.Sprite):
 
     def create_arrow(self):
         pass
-    
+
     def update(self):
         pass
 

@@ -1,6 +1,7 @@
 import pygame
 from Settings import list_weapon
 from Sword import Sword
+import bow
 
 pygame.init()
 
@@ -60,6 +61,16 @@ class Player(pygame.sprite.Sprite):
             self.speed = 0
             return sword
 
+    def create_arrow(self):
+        direction_map = {
+            'left': (self.rect.midleft[0], self.rect.midleft[1]),
+            'right': (self.rect.midright[0], self.rect.midright[1]),
+            'down': (self.rect.midbottom[0], self.rect.midbottom[1]),
+            'up': (self.rect.midtop[0], self.rect.midtop[1])}
+        arrow = bow.Arrow(direction_map[self.see][0], direction_map[self.see][1], self.see)
+
+        self.group[1].add(arrow)
+
     """switch weapon"""
 
     def switch_weapon(self, keys):
@@ -103,5 +114,4 @@ class Player(pygame.sprite.Sprite):
             if self.weapon == 'sword':
                 self.create_sword()
             else:
-                print('beee')
-                # weapon = create_arrow()
+                self.create_arrow()

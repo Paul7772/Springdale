@@ -4,13 +4,15 @@ pygame.init()
 
 
 class Arrow(pygame.sprite.Sprite):
-    def __init__(self, x: int, y: int, path: str, see):
+    def __init__(self, x: int, y: int, see):
         pygame.sprite.Sprite.__init__(self)
         self.lvl = 1
         self.distance = 0
         self.damage = self.lvl * self.distance * 10
-        self.image = pygame.image.load(path).convert_alpha()
+        self.image = pygame.image.load('Sprite/Menu/Button.png').convert_alpha()
         self.direction = 'none'
+        self.speed = 4
+        self.movement = lambda: self.rect.x - self.speed if see == 'left' or see == 'right' else self.rect.y - self.speed
         if see == 'left':
             self.rect = self.image.get_rect(midleft=(x, y))
 
@@ -22,4 +24,5 @@ class Arrow(pygame.sprite.Sprite):
             self.rect = self.rect = self.image.get_rect(midtop=(x, y))
 
     def update(self):
-        pass
+        self.movement()
+
