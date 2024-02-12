@@ -12,7 +12,7 @@ class Arrow(pygame.sprite.Sprite):
         self.image = pygame.image.load('Sprite/Menu/Button.png').convert_alpha()
         self.direction = 'none'
         self.speed = 4
-        self.movement = lambda: self.rect.x - self.speed if see == 'left' or see == 'right' else self.rect.y - self.speed
+
         if see == 'left':
             self.rect = self.image.get_rect(midleft=(x, y))
 
@@ -24,5 +24,6 @@ class Arrow(pygame.sprite.Sprite):
             self.rect = self.rect = self.image.get_rect(midtop=(x, y))
 
     def update(self):
-        self.movement()
-
+        self.rect.x -= self.speed
+        if self.rect.x >= 1600:
+            self.kill()

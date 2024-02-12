@@ -9,7 +9,7 @@ pygame.init()
 class Player(pygame.sprite.Sprite):
     """class of the player's object """
 
-    def __init__(self, x: int, y: int, sword_group, all_sprite):
+    def __init__(self, x: int, y: int, sword_group, all_sprite, arrow_group):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('Sprite/Game/Player/idle/idle_left/idle left1.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (38, 74))
@@ -28,7 +28,7 @@ class Player(pygame.sprite.Sprite):
         self.can_attack = True
         self.attack_time = None
         self.attack_duration_cooldown = 1000
-        self.group = (sword_group, all_sprite)
+        self.group = (sword_group,arrow_group, all_sprite)
         """break attack"""
         self.attack_break_time = 200
 
@@ -68,7 +68,6 @@ class Player(pygame.sprite.Sprite):
             'down': (self.rect.midbottom[0], self.rect.midbottom[1]),
             'up': (self.rect.midtop[0], self.rect.midtop[1])}
         arrow = bow.Arrow(direction_map[self.see][0], direction_map[self.see][1], self.see)
-
         self.group[1].add(arrow)
 
     """switch weapon"""
@@ -82,7 +81,6 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.index_weapon = 0
             self.weapon = list_weapon[self.index_weapon]
-            print(self.weapon)
 
     def break_attack(self):
         current_time = pygame.time.get_ticks()

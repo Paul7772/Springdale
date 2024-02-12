@@ -4,15 +4,12 @@
 # TODO: (по возможности) написать класс нпс которые будут помогать в убийстве зомби
 # TODO: обязательно сделать анимацию
 
-
-
 import pygame
 import random
-from Settings import health_bar, create_frame_health_bar, create_object
+import Settings as set
 from Ui_menu import create_button, text
 from Mobs import Zombie
 from player import Player
-
 
 pygame.init()
 
@@ -36,9 +33,6 @@ pygame.display.set_caption('Springdale')
 clock = pygame.time.Clock()
 
 """Background"""
-# bg_surf = pygame.image.load('Sprite/bg.png').convert_alpha()
-# bg_surf = pygame.transform.scale(bg_surf, (W, H))
-
 bg_menu = pygame.image.load('Sprite/Menu/bg.png').convert_alpha()
 bg_menu = pygame.transform.scale(bg_menu, (W, H))
 
@@ -55,13 +49,15 @@ swords = pygame.sprite.Group()
 
 zombies = pygame.sprite.Group()
 
+arrows = pygame.sprite.Group()
+
 """Player"""
-player = Player(1250, H - 70, swords, all_sprite)
+player = Player(1250, H - 70, swords, all_sprite, arrows)
 players.add(player)
 all_sprite.add(player)
 
 """first mob"""
-mob = create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
+mob = set.create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
 
 """Text and button"""
 name_game = text('Springdale', name_font)
@@ -75,24 +71,24 @@ def check_hit(obj1, obj2, class_obj2):
         obj1.attack()
 
 
-# while True:
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             exit()
-#     screen.blit(bg_menu, (0, 0))
-#     screen.blit(name_game, (390, 200))
-#     screen.blit(start_game_button, (410, 250))
-#     screen.blit(start_game_text, (495, 380))
-#     pygame.display.flip()
+''' while True:
+     for event in pygame.event.get():
+         if event.type == pygame.QUIT:
+             exit()
+     screen.blit(bg_menu, (0, 0))
+     screen.blit(name_game, (390, 200))
+     screen.blit(start_game_button, (410, 250))
+     screen.blit(start_game_text, (495, 380))
+     pygame.display.flip() '''
 
-pygame.mixer.music.play(-1)
+# pygame.mixer.music.play(-1)
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit()
         if event.type == create_zombie:
             for i in range(5):
-                mob = create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
+                mob = set.create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
 
     # check_hit(mob, player, players)
     # check_hit(mob, swords[0], swords)
@@ -100,7 +96,9 @@ while True:
     all_sprite.update()
     clock.tick(FPS)
     screen.fill(GREEN)
-    screen.blit(create_frame_health_bar(), (11, 11))
-    screen.blit(health_bar(player), (15, 15))
     all_sprite.draw(screen)
+    screen.blit(set.create_frame(90, 90), (25, 780))
+    screen.blit(set.icon_weapon(player), (30, 785))
+    screen.blit(set.create_frame(310, 40), (11, 11))
+    screen.blit(set.health_bar(player), (15, 15))
     pygame.display.flip()

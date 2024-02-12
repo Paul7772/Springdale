@@ -10,9 +10,9 @@ image = {
          17: 'Sprite/Menu/Button.png'}
 
 
-def create_frame_health_bar():
+def create_frame(width, height):
     frame = pygame.image.load('Sprite/Game/UI_Game/frame.png')
-    frame = pygame.transform.scale(frame, (310, 40))
+    frame = pygame.transform.scale(frame, (width, height))
     return frame
 
 
@@ -35,21 +35,15 @@ def health_bar(player):
     return hp
 
 
-# def create_sword(player, classes, all_sprite, group):
-#    if player.see == 'left':
-#        sword = classes(player.rect.midright[0], player.rect.midright[1], image[15], player.see)
-#    elif player.see == 'right':
-#        sword = classes(player.rect.midleft[0], player.rect.midleft[1], image[15], player.see)
-#    elif player.see == 'down':
-#        sword = classes(player.rect.midbottom[0], player.rect.midbottom[1], image[15], player.see)
-#    elif player.see == 'up':
-#        sword = classes(player.rect.midtop[0], player.rect.midtop[1], image[15], player.see)
-#    else:
-#        sword = classes(player.rect.midright[0], player.rect.midright[1], image[15], player.see)
-#    group.add(sword)
-#    all_sprite.add(sword)
-#    return sword
-#
+def icon_weapon(player):
+    if player.weapon == 'sword':
+        icon = pygame.image.load('Sprite/Game/icon_weapon/sword.png').convert_alpha()
+        icon = pygame.transform.scale(icon, (80, 80))
+    else:
+        icon = pygame.image.load('Sprite/Game/icon_weapon/bow.png').convert_alpha()
+        icon = pygame.transform.scale(icon, (80, 80))
+    return icon
+
 
 def create_object(classes, all_sprite, group, x: int, y: int):
     objects = classes(x, y)
