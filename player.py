@@ -57,7 +57,7 @@ class Player(pygame.sprite.Sprite):
             self.attack_time = pygame.time.get_ticks()
             sword = Sword(direction_map[self.see][0], direction_map[self.see][1], self.see)
             self.group[0].add(sword)
-            self.group[1].add(sword)
+            self.group[-1].add(sword)
             self.speed = 0
             return sword
 
@@ -69,7 +69,7 @@ class Player(pygame.sprite.Sprite):
             'up': (self.rect.midtop[0], self.rect.midtop[1])}
         arrow = bow.Arrow(direction_map[self.see][0], direction_map[self.see][1], self.see)
         self.group[1].add(arrow)
-
+        self.group[-1].add(arrow)
     """switch weapon"""
 
     def switch_weapon(self, keys):
