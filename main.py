@@ -10,6 +10,7 @@ import Settings as set
 import Ui_menu as ui
 from Mobs import Zombie
 from player import Player
+from tower import Tower
 
 pygame.init()
 
@@ -20,7 +21,9 @@ GREEN = (0, 189, 0)
 
 FPS = 120
 """Music"""
-pygame.mixer.music.load('Sound/Music.ogg')
+pygame.mixer.music.load("Sound/Music.ogg")
+
+zombie_wave_count = 0
 
 """font"""
 pygame.font.init()
@@ -52,6 +55,9 @@ zombies = pygame.sprite.Group()
 arrows = pygame.sprite.Group()
 
 ui_g = pygame.sprite.Group()
+
+towers = pygame.sprite.Group()
+
 """Player"""
 player = Player(1250, H - 70, swords, all_sprite, arrows)
 players.add(player)
@@ -60,7 +66,12 @@ all_sprite.add(player)
 """first mob"""
 mob = set.create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
 
-"""Text and button"""
+"""Tower"""
+tower = Tower()
+all_sprite.add(tower)
+towers.add(tower)
+
+"""Menu Settings"""
 name_game = ui.text('Springdale', name_font)
 start_game_button = ui.Button(660, 440)
 ui_g.add(start_game_button)
@@ -68,6 +79,9 @@ start_game_text = ui.text('New Game', button_font)
 music_button_text = ui.text('Music', button_font)
 music_button = ui.Button(660, 550)
 ui_g.add(music_button)
+exit_button_text = ui.text('Exit', button_font)
+exit_button = ui.Button(660, 660)
+ui_g.add(exit_button)
 
 
 def check_click(button):
@@ -92,30 +106,37 @@ def menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
+
         screen.blit(bg_menu, (0, 0))
         screen.blit(name_game, (390, 200))
         ui_g.draw(screen)
         screen.blit(start_game_text, (495, 380))
         screen.blit(music_button_text, (560, 485))
-
+        screen.blit(exit_button_text, (595, 605))
         pygame.display.flip()
         if check_click(start_game_button):
             break
         if check_click(music_button):
             pygame.mixer.music.play(-1)
             pygame.mixer.music.set_volume(0.1)
+        if check_click(exit_button):
+            exit()
     main()
 
 
 def main():
+    global zombie_wave_count
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
             if event.type == create_zombie:
-                for i in range(5):
-                    mob = set.create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
-
+                if zombie_wave_count < 25:
+                    zombie_wave_count += 1
+                    for i in range(3):
+                        mob = set.create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
+                else:
+                    exit()
         # check_hit(mob, player, players)
         # check_hit(mob, swords[0], swords)
         pygame.mouse.set_visible(False)

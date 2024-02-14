@@ -1,7 +1,7 @@
 import pygame
 from Settings import list_weapon
 from Sword import Sword
-import bow
+from Springdale import bow
 
 pygame.init()
 
@@ -11,7 +11,7 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self, x: int, y: int, sword_group, all_sprite, arrow_group):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('Sprite/Game/Player/idle/idle_left/idle left1.png').convert_alpha()
+        self.image = pygame.image.load('Sprite/Game/Player/idle/Idle_left/idle left1.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (38, 74))
         self.rect = self.image.get_rect(center=(x, y))
         self.gold = 0
@@ -31,20 +31,34 @@ class Player(pygame.sprite.Sprite):
         self.group = (sword_group,arrow_group, all_sprite)
         """break attack"""
         self.attack_break_time = 200
+        """Create arrow"""
+        self.can_arrow = True
+        self.arrow_time = None
+        self.arrow_duration_cooldown = 400
 
     def walk(self, keys):
         if keys[pygame.K_a]:
             self.rect.x -= self.speed
             self.see = 'left'
         if keys[pygame.K_d]:
-            self.rect.x += self.speed
-            self.see = 'right'
+            if self.rect.x <= 1286:
+                self.rect.x += self.speed
+                self.see = 'right'
+            else:
+                self.rect.x = 1286
         if keys[pygame.K_s]:
-            self.rect.y += self.speed
-            self.see = 'down'
+            if self.rect.y <= 826:
+                self.rect.y += self.speed
+                self.see = 'down'
+            else:
+                self.rect.y = 826
         if keys[pygame.K_w]:
-            self.rect.y -= self.speed
-            self.see = 'up'
+            if self.rect.y >= 0:
+                self.rect.y -= self.speed
+                self.see = 'up'
+            else:
+                self.rect.y = 0
+
 
     def create_sword(self):
         direction_map = {
@@ -62,16 +76,15 @@ class Player(pygame.sprite.Sprite):
             return sword
 
     def create_arrow(self):
-        direction_map = {
-            'left': (self.rect.midleft[0], self.rect.midleft[1]),
-            'right': (self.rect.midright[0], self.rect.midright[1]),
-            'down': (self.rect.midbottom[0], self.rect.midbottom[1]),
-            'up': (self.rect.midtop[0], self.rect.midtop[1])}
-        arrow = bow.Arrow(direction_map[self.see][0], direction_map[self.see][1], self.see)
-        self.group[1].add(arrow)
-        self.group[-1].add(arrow)
-    """switch weapon"""
+        if self.can_arrow:
+            self.can_arrow = False
+            self.arrow_time = pygame.time.get_ticks()
+            arrow = bow.Arrow(self.rect.x, self.rect.y + 40, self.see)
+            self.group[1].add(arrow)
+            self.group[-1].add(arrow)
+            return arrow
 
+    """switch weapon"""
     def switch_weapon(self, keys):
         if keys[pygame.K_q] and self.can_switch_weapon:
             self.can_switch_weapon = False
@@ -107,6 +120,7 @@ class Player(pygame.sprite.Sprite):
         self.can_switch_weapon = self.cooldown(self.weapon_switch_time, self.can_switch_weapon,
                                                self.switch_duration_cooldown)
         self.can_attack = self.cooldown(self.attack_time, self.can_attack, self.attack_duration_cooldown)
+        self.can_arrow = self.cooldown(self.arrow_time, self.can_arrow, self.arrow_duration_cooldown)
         self.break_attack()
         if mouse_keys[0]:
             if self.weapon == 'sword':

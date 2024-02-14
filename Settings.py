@@ -21,16 +21,16 @@ def health_bar(player):
     count_boxes = 20
     width = max_hp / count_boxes * player.heart
     if player.heart >= 14:
-        hp = pygame.image.load('Sprite/Game/Hp_line/hp_Line_Full.png').convert_alpha()
+        hp = pygame.image.load('Sprite/Game/Hp_line/Hp_line_Full.png').convert_alpha()
         hp = pygame.transform.scale(hp, (width, 30))
     elif player.heart >= 8:
-        hp = pygame.image.load('Sprite/Game/Hp_line/hp_line_Medium.png').convert_alpha()
+        hp = pygame.image.load('Sprite/Game/Hp_line/Hp_line_Medium.png').convert_alpha()
         hp = pygame.transform.scale(hp, (width, 30))
     elif player.heart < 8:
-        hp = pygame.image.load('Sprite/Game/Hp_line/hp_line_low.png').convert_alpha()
+        hp = pygame.image.load('Sprite/Game/Hp_line/Hp_line_low.png').convert_alpha()
         hp = pygame.transform.scale(hp, (width, 30))
     else:
-        hp = pygame.image.load('Sprite/Game/Hp_line/hp_Line_Full.png').convert_alpha()
+        hp = pygame.image.load('Sprite/Game/Hp_line/Hp_line_Full.png').convert_alpha()
         hp = pygame.transform.scale(hp, (width, 30))
     return hp
 

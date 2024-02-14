@@ -12,16 +12,8 @@ class Arrow(pygame.sprite.Sprite):
         self.image = pygame.image.load('Sprite/Game/Arrow/arrow.png').convert_alpha()
         self.direction = 'none'
         self.speed = 4
+        self.rect = self.image.get_rect(midleft=(x, y))
 
-        if see == 'left':
-            self.rect = self.image.get_rect(midleft=(x, y))
-
-        elif see == 'right':
-            self.rect = self.rect = self.image.get_rect(midright=(x, y))
-        elif see == 'down':
-            self.rect = self.image.get_rect(midbottom=(x, y))
-        elif see == 'up':
-            self.rect = self.rect = self.image.get_rect(midtop=(x, y))
 
     def update(self):
         self.rect.x -= self.speed
