@@ -97,14 +97,13 @@ def menu():
         ui_g.draw(screen)
         screen.blit(start_game_text, (495, 380))
         screen.blit(music_button_text, (560, 485))
-        start = check_click(start_game_button)
-        music = check_click(music_button)
+
         pygame.display.flip()
-        if start:
+        if check_click(start_game_button):
             break
-        if music:
+        if check_click(music_button):
             pygame.mixer.music.play(-1)
-            pygame.mixer.music.set_volume(0.2)
+            pygame.mixer.music.set_volume(0.1)
     main()
 
 
