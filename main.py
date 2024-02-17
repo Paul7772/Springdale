@@ -11,6 +11,7 @@ import Ui_menu as ui
 from Mobs import Zombie
 from player import Player
 from tower import Tower
+from seller import Seller
 
 pygame.init()
 
@@ -58,6 +59,8 @@ ui_g = pygame.sprite.Group()
 
 towers = pygame.sprite.Group()
 
+sellers = pygame.sprite.Group()
+
 """Player"""
 player = Player(1250, H - 70, swords, all_sprite, arrows)
 players.add(player)
@@ -67,7 +70,7 @@ all_sprite.add(player)
 mob = set.create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
 
 """Tower"""
-tower = Tower()
+tower = Tower(1286, 450)
 all_sprite.add(tower)
 towers.add(tower)
 
@@ -83,6 +86,11 @@ exit_button_text = ui.text('Exit', button_font)
 exit_button = ui.Button(660, 660)
 ui_g.add(exit_button)
 
+"""Seller 1"""
+seller_1 = Seller(1200, 550)
+all_sprite.add(seller_1)
+sellers.add(seller_1)
+
 
 def check_click(button):
     pos = pygame.mouse.get_pos()
@@ -93,12 +101,6 @@ def check_click(button):
                 return True
     else:
         return False
-
-
-def check_hit(obj1, obj2, class_obj2):
-    hit_list = pygame.sprite.spritecollide(obj1, class_obj2, False)
-    if hit_list:
-        obj1.attack()
 
 
 def menu():
