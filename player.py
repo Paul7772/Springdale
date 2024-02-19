@@ -1,7 +1,7 @@
 import pygame
 from Settings import list_weapon
 from Sword import Sword
-from Springdale import bow
+import bow
 
 pygame.init()
 
