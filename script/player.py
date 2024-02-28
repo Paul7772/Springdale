@@ -1,7 +1,13 @@
 import pygame
+<<<<<<< HEAD:script/player.py
 from script.Settings import list_weapon
 from script.Sword import Sword
 from script import bow
+=======
+from Settings import list_weapon
+from Sword import Sword
+import bow
+>>>>>>> 88e5a011c5e0f1b2d99100a48bf45a8a762487ed:player.py
 
 pygame.init()
 
