@@ -1,4 +1,4 @@
-<img alt="Springdale logo" height="200" src="../Readme_file/icon.jpg" width="200"/>
+<img alt="Springdale logo" height="200" src="Readme_file/icon.jpg" width="200"/>
 
 <h1>Springdale</h1>
 
