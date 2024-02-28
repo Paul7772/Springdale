@@ -6,7 +6,8 @@
 
 import pygame
 import random
-from script import Ui_menu as ui, Settings as set
+from script import Ui_menu as ui
+from script import Settings as set
 from script.Mobs import Zombie
 from script.player import Player
 from script.tower import Tower

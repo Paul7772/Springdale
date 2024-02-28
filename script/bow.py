@@ -19,3 +19,4 @@ class Arrow(pygame.sprite.Sprite):
         self.rect.x -= self.speed
         if self.rect.x >= 1600:
             self.kill()
+
