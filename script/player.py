@@ -1,7 +1,7 @@
 import pygame
-from Settings import list_weapon
-from Sword import Sword
-from Springdale import bow
+from script.Settings import list_weapon
+from script.Sword import Sword
+from script import bow
 
 pygame.init()
 
@@ -28,7 +28,7 @@ class Player(pygame.sprite.Sprite):
         self.can_attack = True
         self.attack_time = None
         self.attack_duration_cooldown = 1000
-        self.group = (sword_group,arrow_group, all_sprite)
+        self.group = (sword_group, arrow_group, all_sprite)
         """break attack"""
         self.attack_break_time = 200
         """Create arrow"""
@@ -59,7 +59,6 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.rect.y = 0
 
-
     def create_sword(self):
         direction_map = {
             'left': (self.rect.midleft[0], self.rect.midleft[1]),
@@ -85,6 +84,7 @@ class Player(pygame.sprite.Sprite):
             return arrow
 
     """switch weapon"""
+
     def switch_weapon(self, keys):
         if keys[pygame.K_q] and self.can_switch_weapon:
             self.can_switch_weapon = False
@@ -104,7 +104,8 @@ class Player(pygame.sprite.Sprite):
                     sword.kill()
                     self.speed = 2
 
-    def cooldown(self, time, can, duration_cooldown):
+    @staticmethod
+    def cooldown(time, can, duration_cooldown):
         current_time = pygame.time.get_ticks()
         if not can:
             if current_time - time >= duration_cooldown:

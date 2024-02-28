@@ -40,7 +40,7 @@ def icon_weapon(player):
         icon = pygame.image.load('Sprite/Game/icon_weapon/sword.png').convert_alpha()
         icon = pygame.transform.scale(icon, (80, 80))
     else:
-        icon = pygame.image.load('Sprite/Game/icon_weapon/bow.png').convert_alpha()
+        icon = pygame.image.load('ite/Game/icon_weapon/bow.png').convert_alpha()
         icon = pygame.transform.scale(icon, (80, 80))
     return icon
 

@@ -6,12 +6,11 @@
 
 import pygame
 import random
-import Settings as set
-import Ui_menu as ui
-from Mobs import Zombie
-from player import Player
-from tower import Tower
-from seller import Seller
+from script import Ui_menu as ui, Settings as set
+from script.Mobs import Zombie
+from script.player import Player
+from script.tower import Tower
+
 
 pygame.init()
 
@@ -86,11 +85,6 @@ exit_button_text = ui.text('Exit', button_font)
 exit_button = ui.Button(660, 660)
 ui_g.add(exit_button)
 
-"""Seller 1"""
-seller_1 = Seller(1200, 550)
-all_sprite.add(seller_1)
-sellers.add(seller_1)
-
 
 def check_click(button):
     pos = pygame.mouse.get_pos()
@@ -143,13 +137,14 @@ def main():
         # check_hit(mob, swords[0], swords)
         pygame.mouse.set_visible(False)
         all_sprite.update()
-        clock.tick(FPS)
+
         screen.fill(GREEN)
         all_sprite.draw(screen)
         screen.blit(set.create_frame(90, 90), (25, 780))
         screen.blit(set.icon_weapon(player), (30, 785))
         screen.blit(set.create_frame(310, 40), (11, 11))
         screen.blit(set.health_bar(player), (15, 15))
+        clock.tick(FPS)
         pygame.display.flip()
 
 
