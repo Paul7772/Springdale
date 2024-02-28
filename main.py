@@ -12,7 +12,6 @@ from Mobs import Zombie
 from player import Player
 from tower import Tower
 
-
 pygame.init()
 
 W, H = 1324, 900
@@ -67,7 +66,7 @@ players.add(player)
 all_sprite.add(player)
 
 """first mob"""
-mob = set.create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
+zombie = set.create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
 
 """Tower"""
 tower = Tower(1286, 450)
@@ -98,6 +97,19 @@ def check_click(button):
         return False
 
 
+def get_a_weapon(group):
+    weapon = None
+    for item in group:
+        weapon = item
+    return weapon
+
+
+def check_hit(group1, group2, obj1, obj2):
+    hit_list = pygame.sprite.groupcollide(group1, group2, False, False)
+    if hit_list:
+        obj1.heart -= obj2.damage
+
+
 def menu():
     while True:
         for event in pygame.event.get():
@@ -122,7 +134,7 @@ def menu():
 
 
 def main():
-    global zombie_wave_count
+    global zombie_wave_count, zombie
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -131,11 +143,11 @@ def main():
                 if zombie_wave_count < 25:
                     zombie_wave_count += 1
                     for i in range(3):
-                        mob = set.create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
+                        zombie = set.create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
                 else:
                     exit()
-        # check_hit(mob, player, players)
-        # check_hit(mob, swords[0], swords)
+        check_hit(zombies, players, player, zombie)
+        # check_hit(zombies, swords, zombie, get_a_weapon(swords))
         pygame.mouse.set_visible(False)
         all_sprite.update()
 

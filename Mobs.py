@@ -37,4 +37,6 @@ class Zombie(pygame.sprite.Sprite):
         self.cooldown()
         if self.rect.x >= W + 25:
             self.kill()
+        if self.heart <= 0:
+            self.kill()
         self.rect.x += self.speed
