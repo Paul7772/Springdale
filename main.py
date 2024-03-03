@@ -54,7 +54,9 @@ zombies = pygame.sprite.Group()
 
 arrows = pygame.sprite.Group()
 
-ui_g = pygame.sprite.Group()
+ui_menu = pygame.sprite.Group()
+
+ui_game = pygame.sprite.Group()
 
 towers = pygame.sprite.Group()
 
@@ -68,22 +70,20 @@ all_sprite.add(player)
 """first mob"""
 zombie = set.create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
 
-"""Tower"""
-tower = Tower(1286, 450)
-all_sprite.add(tower)
-towers.add(tower)
-
 """Menu Settings"""
 name_game = ui.text('Springdale', name_font)
-start_game_button = ui.Button(660, 440)
-ui_g.add(start_game_button)
-start_game_text = ui.text('New Game', button_font)
-music_button_text = ui.text('Music', button_font)
-music_button = ui.Button(660, 550)
-ui_g.add(music_button)
-exit_button_text = ui.text('Exit', button_font)
-exit_button = ui.Button(660, 660)
-ui_g.add(exit_button)
+start_game_button = ui.Button(660, 440, 'Sprite/Menu/start_button.png', 275, 100)
+ui_menu.add(start_game_button)
+
+music_button = ui.Button(65, 65, 'Sprite/Menu/music_button.png', 100, 100)
+ui_menu.add(music_button)
+
+quit_button = ui.Button(660, 550, 'Sprite/Menu/quit_button.png', 275, 100)
+ui_menu.add(quit_button)
+
+"""UI Game"""
+pause_button = ui.Button(1290, 30, 'Sprite/Game/UI_Game/pause_button.png', 50, 50)
+all_sprite.add(pause_button)
 
 
 def check_click(button):
@@ -118,18 +118,15 @@ def menu():
 
         screen.blit(bg_menu, (0, 0))
         screen.blit(name_game, (390, 200))
-        ui_g.draw(screen)
-        screen.blit(start_game_text, (495, 380))
-        screen.blit(music_button_text, (560, 485))
-        screen.blit(exit_button_text, (595, 605))
+        ui_menu.draw(screen)
         pygame.display.flip()
         if check_click(start_game_button):
             break
         if check_click(music_button):
             pygame.mixer.music.play(-1)
             pygame.mixer.music.set_volume(0.1)
-        if check_click(exit_button):
-            exit()
+        if check_click(quit_button):
+           exit()
     main()
 
 
@@ -148,15 +145,13 @@ def main():
                     exit()
         check_hit(zombies, players, player, zombie)
         # check_hit(zombies, swords, zombie, get_a_weapon(swords))
-        pygame.mouse.set_visible(False)
         all_sprite.update()
-
         screen.fill(GREEN)
         all_sprite.draw(screen)
-        screen.blit(set.create_frame(90, 90), (25, 780))
+        screen.blit(set.create_frame(90, 90, 'Sprite/Game/UI_Game/frame1.png'), (25, 780))
         screen.blit(set.icon_weapon(player), (30, 785))
-        screen.blit(set.create_frame(310, 40), (11, 11))
-        screen.blit(set.health_bar(player), (15, 15))
+        screen.blit(set.create_frame(200, 40, 'Sprite/Game/UI_Game/frame2.png'), (11, 11))
+        #screen.blit(set.health_bar(player), (15, 15))
         clock.tick(FPS)
         pygame.display.flip()
 
