@@ -18,7 +18,8 @@ class Player(pygame.sprite.Sprite):
         self.gold = 0
         self.speed = 2
         self.see = 'left'
-        self.heart = 20
+        self.hp = 20
+        self.max_hp = 20
         self.index_weapon = 0
         self.weapon = list_weapon[self.index_weapon]
         """Switch"""

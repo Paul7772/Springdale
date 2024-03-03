@@ -17,7 +17,7 @@ class Button(pygame.sprite.Sprite):
 
 
 def text(texts: str, font):
-    text_surfase = font.render(texts, False, COLOR_TXT)
+    text_surfase = font.render(texts, True, COLOR_TXT)
     return text_surfase
 
 

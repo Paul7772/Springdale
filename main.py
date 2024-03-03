@@ -20,6 +20,10 @@ WHITE = (255, 255, 255)
 GREEN = (0, 189, 0)
 
 FPS = 120
+
+FRAME_ICON = 'Sprite/Game/UI_Game/frame1.png'
+FRAME_RESOURCE = 'Sprite/Game/UI_Game/frame2.png'
+
 """Music"""
 pygame.mixer.music.load("Sound/Music.ogg")
 
@@ -107,7 +111,16 @@ def get_a_weapon(group):
 def check_hit(group1, group2, obj1, obj2):
     hit_list = pygame.sprite.groupcollide(group1, group2, False, False)
     if hit_list:
-        obj1.heart -= obj2.damage
+        obj1.hp -= obj2.damage
+
+
+def create_ui_game():
+    screen.blit(set.create_frame(90, 90, FRAME_ICON), (25, 780))
+    screen.blit(set.icon_weapon(player), (30, 785))
+    screen.blit(set.create_frame(200, 40, FRAME_RESOURCE), (11, 11))
+    screen.blit(set.resources_font_create('HP', player.hp, player.max_hp), (48, 15))
+    screen.blit(set.create_frame(200, 40, FRAME_RESOURCE), (215, 11),)
+    screen.blit(set.resources_font_create('Gold', player.gold, '+∞'), (265, 15))
 
 
 def menu():
@@ -148,10 +161,7 @@ def main():
         all_sprite.update()
         screen.fill(GREEN)
         all_sprite.draw(screen)
-        screen.blit(set.create_frame(90, 90, 'Sprite/Game/UI_Game/frame1.png'), (25, 780))
-        screen.blit(set.icon_weapon(player), (30, 785))
-        screen.blit(set.create_frame(200, 40, 'Sprite/Game/UI_Game/frame2.png'), (11, 11))
-        #screen.blit(set.health_bar(player), (15, 15))
+        create_ui_game()
         clock.tick(FPS)
         pygame.display.flip()
 

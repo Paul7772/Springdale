@@ -8,4 +8,4 @@ class Tower(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('Sprite/Game/Tower/Tower.png').convert_alpha()
         self.rect = self.image.get_rect(center=(x, y))
-        self.heart = 1000
+        self.hp = 1000

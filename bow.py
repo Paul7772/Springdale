@@ -14,9 +14,7 @@ class Arrow(pygame.sprite.Sprite):
         self.speed = 4
         self.rect = self.image.get_rect(midleft=(x, y))
 
-
     def update(self):
         self.rect.x -= self.speed
         if self.rect.x >= 1600:
             self.kill()
-

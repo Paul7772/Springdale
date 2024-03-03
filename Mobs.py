@@ -13,7 +13,7 @@ class Zombie(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
         self.lvl = 1
         self.damage = self.lvl * 2
-        self.heart = self.lvl * 20
+        self.hp = self.lvl * 20
         self.speed = 1
         self.can_attack = True
         self.attack_time = None
@@ -37,6 +37,6 @@ class Zombie(pygame.sprite.Sprite):
         self.cooldown()
         if self.rect.x >= W + 25:
             self.kill()
-        if self.heart <= 0:
+        if self.hp <= 0:
             self.kill()
         self.rect.x += self.speed
