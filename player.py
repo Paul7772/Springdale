@@ -99,15 +99,15 @@ class Player(pygame.sprite.Sprite):
 
     def break_attack(self):
         current_time = pygame.time.get_ticks()
-        if len(self.group[0]) > 0:
+        if self.group[0]:
             if current_time - self.attack_time >= self.attack_break_time:
-                # self.group[0][0].kill()
                 for sword in self.group[0]:
                     sword.kill()
                     self.speed = 2
+        else:
+            self.speed = 2
 
-    @staticmethod
-    def cooldown(time, can, duration_cooldown):
+    def cooldown(self, time, can, duration_cooldown):
         current_time = pygame.time.get_ticks()
         if not can:
             if current_time - time >= duration_cooldown:
