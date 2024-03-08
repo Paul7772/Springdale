@@ -115,6 +115,7 @@ class Player(pygame.sprite.Sprite):
         return can
 
     def update(self):
+        if self.hp <= 
         keys = pygame.key.get_pressed()
         mouse_keys = pygame.mouse.get_pressed()
 

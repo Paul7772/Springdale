@@ -21,4 +21,3 @@
 + The W, A, S, D keys are needed to move
 + The Q key is needed to change weapons
 + Use the left mouse button to hit or shoot
-
