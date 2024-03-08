@@ -1,7 +1,7 @@
-import pygame
-from Settings import list_weapon
+from Settings import *
 from Sword import Sword
 import bow
+from NPC import NPC
 
 
 pygame.init()
@@ -10,12 +10,12 @@ pygame.init()
 class Player(pygame.sprite.Sprite):
     """class of the player's object """
 
-    def __init__(self, x: int, y: int, sword_group, all_sprite, arrow_group):
+    def __init__(self, x: int, y: int, sword_group, all_sprite, arrow_group, nps_group):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('Sprite/Game/Player/idle/Idle_left/idle left1.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (38, 74))
         self.rect = self.image.get_rect(center=(x, y))
-        self.gold = 0
+        self.gold = 400
         self.speed = 2
         self.see = 'left'
         self.hp = 20
@@ -30,13 +30,21 @@ class Player(pygame.sprite.Sprite):
         self.can_attack = True
         self.attack_time = None
         self.attack_duration_cooldown = 1000
-        self.group = (sword_group, arrow_group, all_sprite)
+        self.SWORD_GROUP = sword_group
+        self.ARROW_GROUP = arrow_group
+        self.ALL_SPRITES = all_sprite
+        self.NPS_GROUP = nps_group
         """break attack"""
         self.attack_break_time = 200
         """Create arrow"""
         self.can_arrow = True
         self.arrow_time = None
         self.arrow_duration_cooldown = 400
+        """create npc"""
+        self.can_npc_create = True
+        self.npc_create_time = None
+        self.npc_create_cooldown = 4000
+        self.npc_count = 0
 
     def walk(self, keys):
         if keys[pygame.K_a]:
@@ -71,8 +79,8 @@ class Player(pygame.sprite.Sprite):
             self.can_attack = False
             self.attack_time = pygame.time.get_ticks()
             sword = Sword(direction_map[self.see][0], direction_map[self.see][1], self.see)
-            self.group[0].add(sword)
-            self.group[-1].add(sword)
+            self.SWORD_GROUP.add(sword)
+            self.ALL_SPRITES.add(sword)
             self.speed = 0
             return sword
 
@@ -80,12 +88,23 @@ class Player(pygame.sprite.Sprite):
         if self.can_arrow:
             self.can_arrow = False
             self.arrow_time = pygame.time.get_ticks()
-            arrow = bow.Arrow(self.rect.x, self.rect.y + 40, self.see)
-            self.group[1].add(arrow)
-            self.group[-1].add(arrow)
+            arrow = bow.Arrow(self.rect.x, self.rect.y + 40)
+            self.ARROW_GROUP.add(arrow)
+            self.ALL_SPRITES.add(arrow)
             return arrow
 
-    """switch weapon"""
+    def create_npc(self):
+        if self.can_npc_create:
+            if self.npc_count <= 25:
+                if self.gold >= 200:
+                    self.gold -= 200
+                    self.npc_create_time = False
+                    self.arrow_time = pygame.time.get_ticks()
+                    npc = NPC(self.rect.x, self.rect.y, self.ALL_SPRITES, self.ARROW_GROUP)
+                    self.NPS_GROUP.add(npc)
+                    self.ALL_SPRITES.add(npc)
+                    self.npc_count += 1
+                    return npc
 
     def switch_weapon(self, keys):
         if keys[pygame.K_q] and self.can_switch_weapon:
@@ -99,9 +118,9 @@ class Player(pygame.sprite.Sprite):
 
     def break_attack(self):
         current_time = pygame.time.get_ticks()
-        if self.group[0]:
+        if self.SWORD_GROUP:
             if current_time - self.attack_time >= self.attack_break_time:
-                for sword in self.group[0]:
+                for sword in self.SWORD_GROUP:
                     sword.kill()
                     self.speed = 2
         else:
@@ -115,7 +134,8 @@ class Player(pygame.sprite.Sprite):
         return can
 
     def update(self):
-        if self.hp <= 
+        if self.hp <= 0:
+            exit()
         keys = pygame.key.get_pressed()
         mouse_keys = pygame.mouse.get_pressed()
 
@@ -125,9 +145,12 @@ class Player(pygame.sprite.Sprite):
                                                self.switch_duration_cooldown)
         self.can_attack = self.cooldown(self.attack_time, self.can_attack, self.attack_duration_cooldown)
         self.can_arrow = self.cooldown(self.arrow_time, self.can_arrow, self.arrow_duration_cooldown)
+        self.can_npc_create = self.cooldown(self.npc_create_time, self.can_npc_create, self.npc_create_cooldown)
         self.break_attack()
         if mouse_keys[0]:
             if self.weapon == 'sword':
                 self.create_sword()
             else:
                 self.create_arrow()
+        if keys[pygame.K_r]:
+            self.create_npc()

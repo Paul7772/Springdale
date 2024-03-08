@@ -4,7 +4,7 @@ pygame.init()
 
 
 class Arrow(pygame.sprite.Sprite):
-    def __init__(self, x: int, y: int, see):
+    def __init__(self, x: int, y: int):
         pygame.sprite.Sprite.__init__(self)
         self.lvl = 1
         self.distance = 0

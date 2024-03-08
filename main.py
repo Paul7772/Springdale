@@ -3,13 +3,14 @@
 # TODO: (по возможности) написать класс нпс которые будут помогать в убийстве зомби
 # TODO: обязательно сделать анимацию
 
-import pygame
+
 import random
 import Ui_menu as ui
 from Settings import *
 from Mobs import Zombie
 from player import Player
 from tower import Tower
+from NPC import NPC
 
 pygame.init()
 
@@ -55,13 +56,16 @@ towers = pygame.sprite.Group()
 
 sellers = pygame.sprite.Group()
 
+npc_group = pygame.sprite.Group()
+
 """Player"""
-player = Player(1250, H - 70, swords, all_sprite, arrows)
+player = Player(1250, H - 70, swords, all_sprite, arrows, npc_group)
 players.add(player)
 all_sprite.add(player)
 
 """first mob"""
 zombie = create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
+
 
 """Menu Settings"""
 name_game = ui.text('Springdale', name_font)
@@ -142,6 +146,7 @@ def main():
         check_hit(players, zombies)
         check_hit(zombies, swords)
         check_hit(zombies, arrows)
+        check_hit(npc_group, zombies)
         all_sprite.update()
         screen.fill(GREEN)
         all_sprite.draw(screen)
