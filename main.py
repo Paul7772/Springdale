@@ -1,28 +1,17 @@
 """to do"""
 # TODO: Написать класс магазина с оружием и магазина с броней
-# TODO: написать класс обменника ресурсов на деньги
 # TODO: (по возможности) написать класс нпс которые будут помогать в убийстве зомби
 # TODO: обязательно сделать анимацию
 
 import pygame
 import random
 import Ui_menu as ui
-import Settings as set
+from Settings import *
 from Mobs import Zombie
 from player import Player
 from tower import Tower
 
 pygame.init()
-
-W, H = 1324, 900
-
-WHITE = (255, 255, 255)
-GREEN = (0, 189, 0)
-
-FPS = 120
-
-FRAME_ICON = 'Sprite/Game/UI_Game/frame1.png'
-FRAME_RESOURCE = 'Sprite/Game/UI_Game/frame2.png'
 
 """Music"""
 pygame.mixer.music.load("Sound/Music.ogg")
@@ -72,7 +61,7 @@ players.add(player)
 all_sprite.add(player)
 
 """first mob"""
-zombie = set.create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
+zombie = create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
 
 """Menu Settings"""
 name_game = ui.text('Springdale', name_font)
@@ -101,26 +90,20 @@ def check_click(button):
         return False
 
 
-def get_a_weapon(group):
-    weapon = None
-    for item in group:
-        weapon = item
-    return weapon
-
-
-def check_hit(group1, group2, obj1, obj2):
-    hit_list = pygame.sprite.groupcollide(group1, group2, False, False)
+def check_hit(group1, group2):
+    hit_list = pygame.sprite.groupcollide(group1, group2, False, True)
     if hit_list:
-        obj1.hp -= obj2.damage
+        for obj1, obj2 in hit_list.items():
+            obj1.hp -= obj2[0].damage
 
 
 def create_ui_game():
-    screen.blit(set.create_frame(90, 90, FRAME_ICON), (25, 780))
-    screen.blit(set.icon_weapon(player), (30, 785))
-    screen.blit(set.create_frame(200, 40, FRAME_RESOURCE), (11, 11))
-    screen.blit(set.resources_font_create('HP', player.hp, player.max_hp), (48, 15))
-    screen.blit(set.create_frame(200, 40, FRAME_RESOURCE), (215, 11),)
-    screen.blit(set.resources_font_create('Gold', player.gold, '+∞'), (265, 15))
+    screen.blit(create_frame(90, 90, FRAME_ICON), (25, 780))
+    screen.blit(icon_weapon(player), (30, 785))
+    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (11, 11))
+    screen.blit(resources_font_create('HP', player.hp, player.max_hp), (48, 15))
+    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (215, 11), )
+    screen.blit(resources_font_create('Gold', player.gold, '+∞'), (265, 15))
 
 
 def menu():
@@ -139,7 +122,7 @@ def menu():
             pygame.mixer.music.play(-1)
             pygame.mixer.music.set_volume(0.1)
         if check_click(quit_button):
-           exit()
+            exit()
     main()
 
 
@@ -153,11 +136,12 @@ def main():
                 if zombie_wave_count < 25:
                     zombie_wave_count += 1
                     for i in range(3):
-                        zombie = set.create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
+                        zombie = create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
                 else:
                     exit()
-        check_hit(zombies, players, player, zombie)
-        # check_hit(zombies, swords, zombie, get_a_weapon(swords))
+        check_hit(players, zombies)
+        check_hit(zombies, swords)
+        check_hit(zombies, arrows)
         all_sprite.update()
         screen.fill(GREEN)
         all_sprite.draw(screen)

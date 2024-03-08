@@ -1,5 +1,15 @@
 import pygame
 
+W, H = 1324, 900
+
+WHITE = (255, 255, 255)
+GREEN = (0, 189, 0)
+
+FPS = 120
+
+FRAME_ICON = 'Sprite/Game/UI_Game/frame1.png'
+FRAME_RESOURCE = 'Sprite/Game/UI_Game/frame2.png'
+
 BLACK = (0, 0, 0)
 pygame.init()
 hp_font = pygame.font.SysFont('Comic Sans MS', 20)

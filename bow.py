@@ -8,7 +8,7 @@ class Arrow(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.lvl = 1
         self.distance = 0
-        self.damage = self.lvl * self.distance * 10
+        self.damage = self.lvl * 10
         self.image = pygame.image.load('Sprite/Game/Arrow/arrow.png').convert_alpha()
         self.direction = 'none'
         self.speed = 4
