@@ -101,7 +101,6 @@ def check_hit(group1, group2):
             obj1.hp -= obj2[0].damage
 
 
-
 def create_ui_game():
     screen.blit(create_frame(90, 90, FRAME_ICON), (25, 780))
     screen.blit(icon_weapon(player), (30, 785))
