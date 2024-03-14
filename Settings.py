@@ -46,6 +46,9 @@ def create_object(classes, all_sprite, group):
 
 list_weapon = ['sword', 'bow']
 
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> fc9b3ec3c353372b3ec2482b1b0f71acc087ed98
