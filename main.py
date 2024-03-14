@@ -1,10 +1,6 @@
 """to do"""
 # TODO: обязательно сделать анимацию
-
-
 import random
-
-import pygame
 
 import Ui_menu as ui
 from Settings import *
@@ -113,6 +109,13 @@ def check_hit(group1, group2):
             obj1.hp -= obj2[0].damage
 
 
+def check_theft(robbers1, players1):
+    hit_list = pygame.sprite.groupcollide(players, robbers, False, True)
+    if hit_list:
+        for player1, robber1 in hit_list.items():
+            player1.gold -= robber1[0].amount_of_theft
+
+
 def create_ui_game():
     screen.blit(create_frame(90, 90, FRAME_ICON), (25, 780))
     screen.blit(icon_weapon(player), (30, 785))
@@ -150,6 +153,7 @@ def all_hit_checks():
     check_hit(zombies, arrows)
     check_hit(npc_group, zombies)
     check_hit(towers, zombies)
+    check_theft(robbers, players)
 
 
 def main():
