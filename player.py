@@ -51,11 +51,11 @@ class Player(pygame.sprite.Sprite):
             self.rect.x -= self.speed
             self.see = 'left'
         if keys[pygame.K_d]:
-            if self.rect.x <= 1286:
+            if self.rect.x <= 1212:
                 self.rect.x += self.speed
                 self.see = 'right'
             else:
-                self.rect.x = 1286
+                self.rect.x = 1212
         if keys[pygame.K_s]:
             if self.rect.y <= 826:
                 self.rect.y += self.speed
@@ -82,7 +82,6 @@ class Player(pygame.sprite.Sprite):
             self.sword_group.add(sword)
             self.all_sprites.add(sword)
             self.speed = 0
-
 
     def create_arrow(self):
         if self.can_arrow:

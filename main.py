@@ -1,13 +1,14 @@
 """to do"""
-# TODO: Написать класс магазина с оружием и магазина с броней
-# TODO: (по возможности) написать класс нпс которые будут помогать в убийстве зомби
 # TODO: обязательно сделать анимацию
 
 
 import random
+
+import pygame
+
 import Ui_menu as ui
 from Settings import *
-from Mobs import Zombie
+from Mobs import Zombie, Robber
 from player import Player
 from tower import Tower
 from NPC import NPC
@@ -36,6 +37,8 @@ bg_menu = pygame.transform.scale(bg_menu, (W, H))
 """user event"""
 create_zombie = pygame.USEREVENT + 1
 pygame.time.set_timer(create_zombie, 4500)
+create_robber = pygame.USEREVENT + 2
+pygame.time.set_timer(create_robber, 6000)
 
 """Group"""
 all_sprite = pygame.sprite.Group()
@@ -58,14 +61,18 @@ sellers = pygame.sprite.Group()
 
 npc_group = pygame.sprite.Group()
 
+robbers = pygame.sprite.Group()
+
 """Player"""
-player = Player(1250, H - 70, swords, all_sprite, arrows, npc_group)
+player = Player(1200, H - 70, swords, all_sprite, arrows, npc_group)
 players.add(player)
 all_sprite.add(player)
 
 """first mob"""
-zombie = create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
+zombie = create_object(Zombie, all_sprite, zombies)
 
+"""First robber"""
+robber = create_object(Robber, all_sprite, robbers)
 
 """Menu Settings"""
 name_game = ui.text('Springdale', name_font)
@@ -77,6 +84,11 @@ ui_menu.add(music_button)
 
 quit_button = ui.Button(660, 550, 'Sprite/Menu/quit_button.png', 275, 100)
 ui_menu.add(quit_button)
+
+"""Tower"""
+tower = Tower(1300, 400)
+towers.add(tower)
+all_sprite.add(tower)
 
 """UI Game"""
 pause_button = ui.Button(1290, 30, 'Sprite/Game/UI_Game/pause_button.png', 50, 50)
@@ -106,8 +118,10 @@ def create_ui_game():
     screen.blit(icon_weapon(player), (30, 785))
     screen.blit(create_frame(200, 40, FRAME_RESOURCE), (11, 11))
     screen.blit(resources_font_create('HP', player.hp, player.max_hp), (48, 15))
-    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (215, 11), )
+    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (215, 11))
     screen.blit(resources_font_create('Gold', player.gold, '+∞'), (265, 15))
+    screen.blit(create_frame(300, 50, FRAME_RESOURCE), (515, 11))
+    screen.blit(resources_font_create('base HP', tower.hp, 1000), (555, 15))
 
 
 def menu():
@@ -130,6 +144,14 @@ def menu():
     main()
 
 
+def all_hit_checks():
+    check_hit(players, zombies)
+    check_hit(zombies, swords)
+    check_hit(zombies, arrows)
+    check_hit(npc_group, zombies)
+    check_hit(towers, zombies)
+
+
 def main():
     global zombie_wave_count, zombie
     while True:
@@ -140,13 +162,10 @@ def main():
                 if zombie_wave_count < 25:
                     zombie_wave_count += 1
                     for i in range(3):
-                        zombie = create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
+                        zombie = create_object(Zombie, all_sprite, zombies)
                 else:
                     exit()
-        check_hit(players, zombies)
-        check_hit(zombies, swords)
-        check_hit(zombies, arrows)
-        check_hit(npc_group, zombies)
+        all_hit_checks()
         all_sprite.update()
         screen.fill(GREEN)
         all_sprite.draw(screen)
