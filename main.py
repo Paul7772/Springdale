@@ -1,6 +1,4 @@
 """to do"""
-# TODO: Написать класс магазина с оружием и магазина с броней
-# TODO: (по возможности) написать класс нпс которые будут помогать в убийстве зомби
 # TODO: обязательно сделать анимацию
 
 
@@ -59,7 +57,7 @@ sellers = pygame.sprite.Group()
 npc_group = pygame.sprite.Group()
 
 """Player"""
-player = Player(1250, H - 70, swords, all_sprite, arrows, npc_group)
+player = Player(1200, H - 70, swords, all_sprite, arrows, npc_group)
 players.add(player)
 all_sprite.add(player)
 
@@ -77,6 +75,11 @@ ui_menu.add(music_button)
 
 quit_button = ui.Button(660, 550, 'Sprite/Menu/quit_button.png', 275, 100)
 ui_menu.add(quit_button)
+
+"""Tower"""
+tower = Tower(1300, 400)
+towers.add(tower)
+all_sprite.add(tower)
 
 """UI Game"""
 pause_button = ui.Button(1290, 30, 'Sprite/Game/UI_Game/pause_button.png', 50, 50)
@@ -101,14 +104,15 @@ def check_hit(group1, group2):
             obj1.hp -= obj2[0].damage
 
 
-
 def create_ui_game():
     screen.blit(create_frame(90, 90, FRAME_ICON), (25, 780))
     screen.blit(icon_weapon(player), (30, 785))
     screen.blit(create_frame(200, 40, FRAME_RESOURCE), (11, 11))
     screen.blit(resources_font_create('HP', player.hp, player.max_hp), (48, 15))
-    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (215, 11), )
+    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (215, 11))
     screen.blit(resources_font_create('Gold', player.gold, '+∞'), (265, 15))
+    screen.blit(create_frame(300, 50, FRAME_RESOURCE), (515, 11))
+    screen.blit(resources_font_create('base HP', tower.hp, 1000), (555, 15))
 
 
 def menu():
@@ -131,6 +135,14 @@ def menu():
     main()
 
 
+def all_hit_checks():
+    check_hit(players, zombies)
+    check_hit(zombies, swords)
+    check_hit(zombies, arrows)
+    check_hit(npc_group, zombies)
+    check_hit(towers, zombies)
+
+
 def main():
     global zombie_wave_count, zombie
     while True:
@@ -141,13 +153,10 @@ def main():
                 if zombie_wave_count < 25:
                     zombie_wave_count += 1
                     for i in range(3):
-                        zombie = create_object(Zombie, all_sprite, zombies, 10, random.randint(20, 850))
+                        zombie = create_object(Zombie, all_sprite, zombies)
                 else:
                     exit()
-        check_hit(players, zombies)
-        check_hit(zombies, swords)
-        check_hit(zombies, arrows)
-        check_hit(npc_group, zombies)
+        all_hit_checks()
         all_sprite.update()
         screen.fill(GREEN)
         all_sprite.draw(screen)
