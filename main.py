@@ -1,13 +1,12 @@
 """to do"""
 # TODO: обязательно сделать анимацию
-import random
 
 import Ui_menu as ui
 from Settings import *
 from Mobs import Zombie, Robber
 from player import Player
 from tower import Tower
-from NPC import NPC
+
 
 pygame.init()
 
@@ -109,11 +108,11 @@ def check_hit(group1, group2):
             obj1.hp -= obj2[0].damage
 
 
-def check_theft(robbers1, players1):
-    hit_list = pygame.sprite.groupcollide(players, robbers, False, True)
+def check_theft(players1, robbers1):
+    hit_list = pygame.sprite.groupcollide(players1, robbers1, False, True)
     if hit_list:
-        for player1, robber1 in hit_list.items():
-            player1.gold -= robber1[0].amount_of_theft
+        for obj1, obj2 in hit_list.items():
+            obj1.gold -= obj2[0].amount_of_theft
 
 
 def create_ui_game():
@@ -153,11 +152,14 @@ def all_hit_checks():
     check_hit(zombies, arrows)
     check_hit(npc_group, zombies)
     check_hit(towers, zombies)
-    check_theft(robbers, players)
+    check_hit(towers, robbers)
+    check_hit(robbers, swords)
+    check_hit(robbers, arrows)
+    check_theft(players, robbers)
 
 
 def main():
-    global zombie_wave_count, zombie
+    global zombie_wave_count, zombie, robber
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -169,6 +171,8 @@ def main():
                         zombie = create_object(Zombie, all_sprite, zombies)
                 else:
                     exit()
+            if event.type == create_robber:
+                robber = create_object(Robber, all_sprite, robbers)
         all_hit_checks()
         all_sprite.update()
         screen.fill(GREEN)
