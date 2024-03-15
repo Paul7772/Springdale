@@ -115,6 +115,15 @@ def check_theft(players1, robbers1):
             obj1.gold -= obj2[0].amount_of_theft
 
 
+def check_hit_player(players1, zombies1):
+    hit_list = pygame.sprite.groupcollide(players1, zombies1, False, True)
+    if hit_list:
+        for player1, zombie2 in hit_list.items():
+            player1.hp -= zombie2[0].damage
+            player1.time_of_last_hit = pygame.time.get_ticks()
+            player1.can_regeneration = False
+
+
 def create_ui_game():
     screen.blit(create_frame(90, 90, FRAME_ICON), (25, 780))
     screen.blit(icon_weapon(player), (30, 785))
@@ -147,7 +156,7 @@ def menu():
 
 
 def all_hit_checks():
-    check_hit(players, zombies)
+    check_hit_player(players, zombies)
     check_hit(zombies, swords)
     check_hit(zombies, arrows)
     check_hit(npc_group, zombies)
