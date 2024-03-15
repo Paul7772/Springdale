@@ -46,6 +46,10 @@ class Player(pygame.sprite.Sprite):
         self.npc_create_time = None
         self.npc_create_cooldown = 4000
         self.npc_count = 0
+        """regenerations"""
+        self.time_of_last_hit = None
+        self.can_regeneration = True
+        self.regeneration_cooldown = 2000
 
     def walk(self, keys):
         if keys[pygame.K_a]:
@@ -69,6 +73,13 @@ class Player(pygame.sprite.Sprite):
                 self.see = 'up'
             else:
                 self.rect.y = 0
+
+    def regeneration(self):
+        while self.hp < self.max_hp:
+            if self.can_regeneration:
+                self.hp += 1
+            else:
+                break
 
     def create_sword(self):
         direction_map = {
@@ -131,19 +142,23 @@ class Player(pygame.sprite.Sprite):
                 can = True
         return can
 
-    def update(self):
-        if self.hp <= 0:
-            exit()
-        keys = pygame.key.get_pressed()
-        mouse_keys = pygame.mouse.get_pressed()
-
-        self.walk(keys)
-        self.switch_weapon(keys)
+    def all_cooldown(self):
         self.can_switch_weapon = self.cooldown(self.weapon_switch_time, self.can_switch_weapon,
                                                self.switch_duration_cooldown)
         self.can_attack = self.cooldown(self.attack_time, self.can_attack, self.attack_duration_cooldown)
         self.can_arrow = self.cooldown(self.arrow_time, self.can_arrow, self.arrow_duration_cooldown)
         self.can_npc_create = self.cooldown(self.npc_create_time, self.can_npc_create, self.npc_create_cooldown)
+        self.can_regeneration = self.cooldown(self.time_of_last_hit, self.can_regeneration, self.regeneration_cooldown)
+
+    def update(self):
+        if self.hp <= 0:
+            exit()
+        keys = pygame.key.get_pressed()
+        mouse_keys = pygame.mouse.get_pressed()
+        self.walk(keys)
+        self.regeneration()
+        self.switch_weapon(keys)
+        self.all_cooldown()
         self.break_attack()
         if mouse_keys[0]:
             if self.weapon == 'sword':
@@ -152,3 +167,4 @@ class Player(pygame.sprite.Sprite):
                 self.create_arrow()
         if keys[pygame.K_r]:
             self.create_npc()
+
