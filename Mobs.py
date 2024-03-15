@@ -35,4 +35,5 @@ class Robber(Enemy):
     def __init__(self):
         super().__init__(10, randint(20, 850), 'robber.png', 48,
                          84, 3, 5, 10)
+        self.amount_of_theft = 50
 
