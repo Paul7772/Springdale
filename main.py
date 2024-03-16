@@ -7,7 +7,6 @@ from Mobs import Zombie, Robber
 from player import Player
 from tower import Tower
 
-
 pygame.init()
 
 """Music"""
@@ -33,7 +32,7 @@ bg_menu = pygame.transform.scale(bg_menu, (W, H))
 create_zombie = pygame.USEREVENT + 1
 pygame.time.set_timer(create_zombie, 4500)
 create_robber = pygame.USEREVENT + 2
-pygame.time.set_timer(create_robber, 6000)
+pygame.time.set_timer(create_robber, 8000)
 
 """Group"""
 all_sprite = pygame.sprite.Group()
@@ -46,9 +45,9 @@ zombies = pygame.sprite.Group()
 
 arrows = pygame.sprite.Group()
 
-ui_menu = pygame.sprite.Group()
+ui_menu_settings = pygame.sprite.Group()
 
-ui_game = pygame.sprite.Group()
+ui_game_settings = pygame.sprite.Group()
 
 towers = pygame.sprite.Group()
 
@@ -72,13 +71,13 @@ robber = create_object(Robber, all_sprite, robbers)
 """Menu Settings"""
 name_game = ui.text('Springdale', name_font)
 start_game_button = ui.Button(660, 440, 'Sprite/Menu/start_button.png', 275, 100)
-ui_menu.add(start_game_button)
+ui_menu_settings.add(start_game_button)
 
 music_button = ui.Button(65, 65, 'Sprite/Menu/music_button.png', 100, 100)
-ui_menu.add(music_button)
+ui_menu_settings.add(music_button)
 
 quit_button = ui.Button(660, 550, 'Sprite/Menu/quit_button.png', 275, 100)
-ui_menu.add(quit_button)
+ui_menu_settings.add(quit_button)
 
 """Tower"""
 tower = Tower(1300, 400)
@@ -87,7 +86,7 @@ all_sprite.add(tower)
 
 """UI Game"""
 pause_button = ui.Button(1290, 30, 'Sprite/Game/UI_Game/pause_button.png', 50, 50)
-all_sprite.add(pause_button)
+ui_game_settings.add(pause_button)
 
 
 def check_click(button):
@@ -133,26 +132,7 @@ def create_ui_game():
     screen.blit(resources_font_create('Gold', player.gold, '+∞'), (265, 15))
     screen.blit(create_frame(300, 50, FRAME_RESOURCE), (515, 11))
     screen.blit(resources_font_create('base HP', tower.hp, 1000), (555, 15))
-
-
-def menu():
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                exit()
-
-        screen.blit(bg_menu, (0, 0))
-        screen.blit(name_game, (390, 200))
-        ui_menu.draw(screen)
-        pygame.display.flip()
-        if check_click(start_game_button):
-            break
-        if check_click(music_button):
-            pygame.mixer.music.play(-1)
-            pygame.mixer.music.set_volume(0.1)
-        if check_click(quit_button):
-            exit()
-    main()
+    ui_game_settings.draw(screen)
 
 
 def all_hit_checks():
@@ -165,6 +145,26 @@ def all_hit_checks():
     check_hit(robbers, swords)
     check_hit(robbers, arrows)
     check_theft(players, robbers)
+
+
+def menu():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit()
+
+        screen.blit(bg_menu, (0, 0))
+        screen.blit(name_game, (390, 200))
+        ui_menu_settings.draw(screen)
+        pygame.display.flip()
+        if check_click(start_game_button):
+            break
+        if check_click(music_button):
+            pygame.mixer.music.play(-1)
+            pygame.mixer.music.set_volume(0.1)
+        if check_click(quit_button):
+            exit()
+    main()
 
 
 def main():
