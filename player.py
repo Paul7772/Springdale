@@ -46,9 +46,10 @@ class Player(pygame.sprite.Sprite):
         self.npc_create_cooldown = 4000
         self.npc_count = 0
         """regenerations"""
-        self.time_of_last_hit = None
+        self.regeneration_time = None
         self.can_regeneration = True
-        self.regeneration_cooldown = 2000
+        self.regeneration_cooldown = 1500
+
 
     def walk(self, keys):
         if keys[pygame.K_a]:
@@ -74,11 +75,11 @@ class Player(pygame.sprite.Sprite):
                 self.rect.y = 0
 
     def regeneration(self):
-        while self.hp < self.max_hp:
+        if self.hp < self.max_hp:
             if self.can_regeneration:
                 self.hp += 1
-            else:
-                break
+                self.regeneration_time = pygame.time.get_ticks()
+                self.can_regeneration = False
 
     def create_sword(self):
         direction_map = {
@@ -147,7 +148,7 @@ class Player(pygame.sprite.Sprite):
         self.can_attack = self.cooldown(self.attack_time, self.can_attack, self.attack_duration_cooldown)
         self.can_arrow = self.cooldown(self.arrow_time, self.can_arrow, self.arrow_duration_cooldown)
         self.can_npc_create = self.cooldown(self.npc_create_time, self.can_npc_create, self.npc_create_cooldown)
-        self.can_regeneration = self.cooldown(self.time_of_last_hit, self.can_regeneration, self.regeneration_cooldown)
+        self.can_regeneration = self.cooldown(self.regeneration_time, self.can_regeneration, self.regeneration_cooldown)
 
     def update(self):
         if self.hp <= 0:

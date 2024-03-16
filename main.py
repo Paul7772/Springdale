@@ -119,7 +119,7 @@ def check_hit_player(players1, zombies1):
     if hit_list:
         for player1, zombie2 in hit_list.items():
             player1.hp -= zombie2[0].damage
-            player1.time_of_last_hit = pygame.time.get_ticks()
+            player1.regeneration_time = pygame.time.get_ticks()
             player1.can_regeneration = False
 
 
