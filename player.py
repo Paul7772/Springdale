@@ -40,6 +40,7 @@ class Player(pygame.sprite.Sprite):
         self.can_arrow = True
         self.arrow_time = None
         self.arrow_duration_cooldown = 600
+        self.number_of_arrows = 50
         """create npc"""
         self.can_npc_create = True
         self.npc_create_time = None
@@ -50,11 +51,13 @@ class Player(pygame.sprite.Sprite):
         self.can_regeneration = True
         self.regeneration_cooldown = 1500
 
-
     def walk(self, keys):
         if keys[pygame.K_a]:
-            self.rect.x -= self.speed
-            self.see = 'left'
+            if self.rect.x >= 0:
+                self.rect.x -= self.speed
+                self.see = 'left'
+            else:
+                self.rect.x = 0
         if keys[pygame.K_d]:
             if self.rect.x <= 1212:
                 self.rect.x += self.speed
@@ -99,6 +102,7 @@ class Player(pygame.sprite.Sprite):
         if self.can_arrow:
             self.can_arrow = False
             self.arrow_time = pygame.time.get_ticks()
+            self.number_of_arrows -= 1
             arrow = bow.Arrow(self.rect.x, self.rect.y + 40)
             self.arrow_group.add(arrow)
             self.all_sprites.add(arrow)

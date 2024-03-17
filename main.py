@@ -6,6 +6,7 @@ from Settings import *
 from Mobs import Zombie, Robber
 from player import Player
 from tower import Tower
+from random import choices
 
 pygame.init()
 
@@ -47,8 +48,6 @@ arrows = pygame.sprite.Group()
 
 ui_menu_settings = pygame.sprite.Group()
 
-ui_game_settings = pygame.sprite.Group()
-
 towers = pygame.sprite.Group()
 
 sellers = pygame.sprite.Group()
@@ -84,10 +83,6 @@ tower = Tower(1300, 400)
 towers.add(tower)
 all_sprite.add(tower)
 
-"""UI Game"""
-pause_button = ui.Button(1290, 30, 'Sprite/Game/UI_Game/pause_button.png', 50, 50)
-ui_game_settings.add(pause_button)
-
 
 def check_click(button):
     pos = pygame.mouse.get_pos()
@@ -100,11 +95,16 @@ def check_click(button):
         return False
 
 
+get_arrow = ['true', 'false']
+weight = [5, 20]
+
+
 def check_hit(group1, group2):
     hit_list = pygame.sprite.groupcollide(group1, group2, False, True)
     if hit_list:
         for obj1, obj2 in hit_list.items():
             obj1.hp -= obj2[0].damage
+            choices(population=get_arrow, weights=weight)
 
 
 def check_theft(players1, robbers1):
@@ -130,9 +130,10 @@ def create_ui_game():
     screen.blit(resources_font_create('HP', player.hp, player.max_hp), (48, 15))
     screen.blit(create_frame(200, 40, FRAME_RESOURCE), (215, 11))
     screen.blit(resources_font_create('Gold', player.gold, '+∞'), (265, 15))
-    screen.blit(create_frame(300, 50, FRAME_RESOURCE), (515, 11))
-    screen.blit(resources_font_create('base HP', tower.hp, 1000), (555, 15))
-    ui_game_settings.draw(screen)
+    screen.blit(create_frame(300, 50, FRAME_RESOURCE), (630, 11))
+    screen.blit(resources_font_create('base HP', tower.hp, tower.max_hp), (695, 15))
+    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (420, 11))
+    screen.blit(resources_font_create('arrows', player.number_of_arrows, '+∞'), (450, 15))
 
 
 def all_hit_checks():
