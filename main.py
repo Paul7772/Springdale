@@ -1,4 +1,3 @@
-"""to do"""
 # TODO: обязательно сделать анимацию
 
 import Ui_menu as ui
@@ -6,7 +5,8 @@ from Settings import *
 from Mobs import Zombie, Robber
 from player import Player
 from tower import Tower
-from random import choices
+from bonus import Bonus
+
 
 pygame.init()
 
@@ -31,9 +31,11 @@ bg_menu = pygame.transform.scale(bg_menu, (W, H))
 
 """user event"""
 create_zombie = pygame.USEREVENT + 1
-pygame.time.set_timer(create_zombie, 4500)
+pygame.time.set_timer(create_zombie, 10_000)
 create_robber = pygame.USEREVENT + 2
-pygame.time.set_timer(create_robber, 8000)
+pygame.time.set_timer(create_robber, 12_000)
+create_bonus = pygame.USEREVENT + 3
+pygame.time.set_timer(create_bonus, 15_000)
 
 """Group"""
 all_sprite = pygame.sprite.Group()
@@ -55,6 +57,8 @@ sellers = pygame.sprite.Group()
 npc_group = pygame.sprite.Group()
 
 robbers = pygame.sprite.Group()
+
+bonuses = pygame.sprite.Group()
 
 """Player"""
 player = Player(1200, H - 70, swords, all_sprite, arrows, npc_group)
@@ -83,6 +87,20 @@ tower = Tower(1300, 400)
 towers.add(tower)
 all_sprite.add(tower)
 
+"""Bonus"""
+bonus = Bonus(-1_000, -1_000)
+all_sprite.add(bonus)
+bonuses.add(bonus)
+
+
+def check_collision_with_bonus(players, bonuses):
+    hit_list = pygame.sprite.groupcollide(players, bonuses, False, False)
+    if hit_list:
+        for obj1, obj2 in hit_list.items():
+            obj1.number_of_arrows += obj2[0].value
+            obj2[0].update_value()
+            obj2[0].rect.x, obj2[0].rect.y = -1_000, -1_000
+
 
 def check_click(button):
     pos = pygame.mouse.get_pos()
@@ -95,16 +113,11 @@ def check_click(button):
         return False
 
 
-get_arrow = ['true', 'false']
-weight = [5, 20]
-
-
 def check_hit(group1, group2):
     hit_list = pygame.sprite.groupcollide(group1, group2, False, True)
     if hit_list:
         for obj1, obj2 in hit_list.items():
             obj1.hp -= obj2[0].damage
-            choices(population=get_arrow, weights=weight)
 
 
 def check_theft(players1, robbers1):
@@ -121,6 +134,7 @@ def check_hit_player(players1, zombies1):
             player1.hp -= zombie2[0].damage
             player1.regeneration_time = pygame.time.get_ticks()
             player1.can_regeneration = False
+
 
 
 def create_ui_game():
@@ -146,6 +160,7 @@ def all_hit_checks():
     check_hit(robbers, swords)
     check_hit(robbers, arrows)
     check_theft(players, robbers)
+    check_collision_with_bonus(players, bonuses)
 
 
 def menu():
@@ -183,6 +198,8 @@ def main():
                     exit()
             if event.type == create_robber:
                 robber = create_object(Robber, all_sprite, robbers)
+            if event.type == create_bonus:
+                bonus.rect.x, bonus.rect.y = random.randrange(1212), random.randrange(850)
         all_hit_checks()
         all_sprite.update()
         screen.fill(GREEN)
