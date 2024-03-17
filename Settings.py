@@ -1,4 +1,5 @@
 import pygame
+import random
 
 W, H = 1324, 900
 

@@ -100,12 +100,13 @@ class Player(pygame.sprite.Sprite):
 
     def create_arrow(self):
         if self.can_arrow:
-            self.can_arrow = False
-            self.arrow_time = pygame.time.get_ticks()
-            self.number_of_arrows -= 1
-            arrow = bow.Arrow(self.rect.x, self.rect.y + 40)
-            self.arrow_group.add(arrow)
-            self.all_sprites.add(arrow)
+            if self.number_of_arrows > 0:
+                self.can_arrow = False
+                self.arrow_time = pygame.time.get_ticks()
+                self.number_of_arrows -= 1
+                arrow = bow.Arrow(self.rect.x, self.rect.y + 40)
+                self.arrow_group.add(arrow)
+                self.all_sprites.add(arrow)
 
     def create_npc(self):
         if self.can_npc_create:
