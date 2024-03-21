@@ -13,7 +13,7 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self, x: int, y: int, sword_group, all_sprite, arrow_group, npc_group):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('Sprite/Game/Player/idle/Idle_left/idle left1.png').convert_alpha()
+        self.image = pygame.image.load('Sprite/Game/Player/Walk_left/walk left1.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (38, 74))
         self.rect = self.image.get_rect(center=(x, y))
         self.gold = 1000
@@ -105,7 +105,7 @@ class Player(pygame.sprite.Sprite):
                 self.can_arrow = False
                 self.arrow_time = pygame.time.get_ticks()
                 self.number_of_arrows -= 1
-                arrow = bow.Arrow(self.rect.x, self.rect.y + 40)
+                arrow = bow.Arrow(self.rect.x, self.rect.y + 40, self.rect.x)
                 self.arrow_group.add(arrow)
                 self.all_sprites.add(arrow)
 

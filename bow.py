@@ -4,7 +4,7 @@ pygame.init()
 
 
 class Arrow(pygame.sprite.Sprite):
-    def __init__(self, x: int, y: int):
+    def __init__(self, x: int, y: int, positions: int):
         pygame.sprite.Sprite.__init__(self)
         self.lvl = 1
         self.distance = 0
@@ -13,8 +13,10 @@ class Arrow(pygame.sprite.Sprite):
         self.direction = 'none'
         self.speed = 4
         self.rect = self.image.get_rect(midleft=(x, y))
+        self.positions_shot = positions
+        self.distance = 600
 
     def update(self):
         self.rect.x -= self.speed
-        if self.rect.x >= 1600:
+        if self.rect.x + self.distance <= self.positions_shot:
             self.kill()
