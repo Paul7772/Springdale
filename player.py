@@ -1,3 +1,4 @@
+
 from Settings import *
 from Sword import Sword
 import bow
@@ -172,3 +173,4 @@ class Player(pygame.sprite.Sprite):
                 self.create_arrow()
         if keys[pygame.K_r]:
             self.create_npc()
+

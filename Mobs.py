@@ -1,3 +1,4 @@
+
 from Settings import *
 
 pygame.init()
@@ -43,4 +44,3 @@ class Robber(Enemy):
         super().__init__(random.randint(20, 850), 'robber.png', 48,
                          84, 2, 1)
         self.amount_of_theft = 50
-
