@@ -13,8 +13,6 @@ pygame.init()
 """Music"""
 pygame.mixer.music.load("Sound/Music.ogg")
 
-zombie_wave_count = 0
-
 """font"""
 pygame.font.init()
 name_font = pygame.font.SysFont('Comic Sans MS', 110)
@@ -113,14 +111,18 @@ def check_collision_with_bonus(players1, bonuses1):
             obj2[0].rect.x, obj2[0].rect.y = -1_000, -1_000
 
 
-def check_hit(group1, group2):
-    hit_list = pygame.sprite.groupcollide(group1, group2, False, False)
+def check_hit_enemy(enemy_group, weapon_group):
+    """check enemy"""
+    global player
+    hit_list = pygame.sprite.groupcollide(enemy_group, weapon_group, False, False)
     if hit_list:
-        for obj1, obj2 in hit_list.items():
-            obj1.hp -= obj2[0].damage
+        for enemy, weapon in hit_list.items():
+            enemy.hp -= weapon[0].damage
+            player.gold += 1
 
 
 def check_theft(players1, robbers1):
+    """check robber"""
     hit_list = pygame.sprite.groupcollide(players1, robbers1, False, True)
     if hit_list:
         for obj1, obj2 in hit_list.items():
@@ -128,12 +130,21 @@ def check_theft(players1, robbers1):
 
 
 def check_hit_player(players1, zombies1):
+    """check player"""
     hit_list = pygame.sprite.groupcollide(players1, zombies1, False, True)
     if hit_list:
         for player1, zombie2 in hit_list.items():
             player1.hp -= zombie2[0].damage
             player1.regeneration_time = pygame.time.get_ticks()
             player1.can_regeneration = False
+
+
+def check_hit_tower(enemy_group, towers1):
+    """Tower check"""
+    hit_list = pygame.sprite.groupcollide(towers1, enemy_group, False, True)
+    if hit_list:
+        for tower1, enemy2 in hit_list.items():
+            tower1.hp -= enemy2[0].damage
 
 
 def create_ui_game():
@@ -150,15 +161,19 @@ def create_ui_game():
 
 
 def all_hit_checks():
+    """check hit player"""
     check_hit_player(players, zombies)
-    check_hit(zombies, swords)
-    check_hit(zombies, arrows)
-    check_hit(npc_group, zombies)
-    check_hit(towers, zombies)
-    check_hit(towers, robbers)
-    check_hit(robbers, swords)
-    check_hit(robbers, arrows)
     check_theft(players, robbers)
+    """check hit enemy"""
+    check_hit_enemy(zombies, swords)
+    check_hit_enemy(zombies, arrows)
+    check_hit_enemy(robbers, swords)
+    check_hit_enemy(robbers, arrows)
+    check_hit_enemy(npc_group, zombies)
+    """check hit tower"""
+    check_hit_tower(zombies, towers)
+    check_hit_tower(robbers, towers)
+    """check bonus"""
     check_collision_with_bonus(players, bonuses)
 
 
@@ -183,18 +198,14 @@ def menu():
 
 
 def main():
-    global zombie_wave_count, zombie, robber
+    global zombie, robber
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
             if event.type == create_zombie:
-                if zombie_wave_count < 25:
-                    zombie_wave_count += 1
-                    for i in range(3):
-                        zombie = create_object(Zombie, all_sprite, zombies)
-                else:
-                    exit()
+                for i in range(3):
+                    zombie = create_object(Zombie, all_sprite, zombies)
             if event.type == create_robber:
                 robber = create_object(Robber, all_sprite, robbers)
             if event.type == create_bonus:

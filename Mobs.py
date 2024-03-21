@@ -22,6 +22,7 @@ class Enemy(pygame.sprite.Sprite):
         curent_time = pygame.time.get_ticks()
         if curent_time - self.update_cooldown >= self.time_update_hp:
             self.hp *= 2
+            self.speed += 1
             self.time_update_hp = pygame.time.get_ticks()
 
     def update(self):
