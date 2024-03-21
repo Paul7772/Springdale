@@ -6,8 +6,7 @@ pygame.init()
 class NPC(pygame.sprite.Sprite):
     def __init__(self, x, y, all_sprite, arrow_group):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('Sprite/Game/Npc/npc_sprite.png')
-        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.image = pygame.image.load('Sprite/Game/Npc/npc.png')
         self.rect = self.image.get_rect(center=(x, y))
         self.hp = 2
         self.can_arrow = True
@@ -26,7 +25,7 @@ class NPC(pygame.sprite.Sprite):
         if self.can_arrow:
             self.can_arrow = False
             self.arrow_time = pygame.time.get_ticks()
-            arrow = Arrow(self.rect.x, self.rect.y + 40)
+            arrow = Arrow(self.rect.x, self.rect.y + 40, self.rect.x)
             self.ARROW_GROUP.add(arrow)
             self.ALL_SPRITES.add(arrow)
             return arrow
