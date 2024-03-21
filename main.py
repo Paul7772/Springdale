@@ -93,15 +93,6 @@ all_sprite.add(bonus)
 bonuses.add(bonus)
 
 
-def check_collision_with_bonus(players, bonuses):
-    hit_list = pygame.sprite.groupcollide(players, bonuses, False, False)
-    if hit_list:
-        for obj1, obj2 in hit_list.items():
-            obj1.number_of_arrows += obj2[0].value
-            obj2[0].update_value()
-            obj2[0].rect.x, obj2[0].rect.y = -1_000, -1_000
-
-
 def check_click(button):
     pos = pygame.mouse.get_pos()
     keys = pygame.mouse.get_pressed()
@@ -113,8 +104,17 @@ def check_click(button):
         return False
 
 
+def check_collision_with_bonus(players1, bonuses1):
+    hit_list = pygame.sprite.groupcollide(players1, bonuses1, False, False)
+    if hit_list:
+        for obj1, obj2 in hit_list.items():
+            obj1.number_of_arrows += obj2[0].value
+            obj2[0].update_value()
+            obj2[0].rect.x, obj2[0].rect.y = -1_000, -1_000
+
+
 def check_hit(group1, group2):
-    hit_list = pygame.sprite.groupcollide(group1, group2, False, True)
+    hit_list = pygame.sprite.groupcollide(group1, group2, False, False)
     if hit_list:
         for obj1, obj2 in hit_list.items():
             obj1.hp -= obj2[0].damage
@@ -134,7 +134,6 @@ def check_hit_player(players1, zombies1):
             player1.hp -= zombie2[0].damage
             player1.regeneration_time = pygame.time.get_ticks()
             player1.can_regeneration = False
-
 
 
 def create_ui_game():
@@ -210,3 +209,4 @@ def main():
 
 
 menu()
+
