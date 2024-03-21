@@ -10,6 +10,5 @@ class Tower(pygame.sprite.Sprite):
         self.image = pygame.image.load('Sprite/Game/Tower/Tower.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (100, 1000))
         self.rect = self.image.get_rect(center=(x, y))
-        self.max_hp = 100
-        self.hp = 100
-
+        self.max_hp = 500
+        self.hp = 500
