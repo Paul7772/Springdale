@@ -1,8 +1,9 @@
 # TODO: обязательно сделать анимацию
+import pygame
 
 import Ui_menu as ui
 from Settings import *
-from Mobs import Zombie, Robber
+from mobs import Zombie
 from player import Player
 from tower import Tower
 from bonus import Bonus
@@ -30,10 +31,15 @@ bg_menu = pygame.transform.scale(bg_menu, (W, H))
 """user event"""
 create_zombie = pygame.USEREVENT + 1
 pygame.time.set_timer(create_zombie, 10_000)
+
 create_robber = pygame.USEREVENT + 2
 pygame.time.set_timer(create_robber, 12_000)
+
 create_bonus = pygame.USEREVENT + 3
 pygame.time.set_timer(create_bonus, 15_000)
+
+update_settings_enemy = pygame.USEREVENT + 4
+pygame.time.set_timer(update_settings_enemy, 40_000)
 
 """Group"""
 all_sprite = pygame.sprite.Group()
@@ -59,15 +65,18 @@ robbers = pygame.sprite.Group()
 bonuses = pygame.sprite.Group()
 
 """Player"""
-player = Player(1200, H - 70, swords, all_sprite, arrows, npc_group)
+player = Player((1200, H - 70), swords, all_sprite, arrows, npc_group)
 players.add(player)
 all_sprite.add(player)
 
+"""mob settings"""
+hp = 10
+speed = 1
 """first mob"""
-zombie = create_object(Zombie, all_sprite, zombies)
+zombie = create_object(Zombie, all_sprite, zombies, speed, hp)
 
 """First robber"""
-robber = create_object(Robber, all_sprite, robbers)
+#robber = create_object(Robber, all_sprite, robbers)
 
 """Menu Settings"""
 name_game = ui.text('Springdale', name_font)
@@ -198,18 +207,22 @@ def menu():
 
 
 def main():
-    global zombie, robber
+    global zombie, robber, hp, speed
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
             if event.type == create_zombie:
                 for i in range(3):
-                    zombie = create_object(Zombie, all_sprite, zombies)
+                    zombie = create_object(Zombie, all_sprite, zombies, speed, hp)
             if event.type == create_robber:
-                robber = create_object(Robber, all_sprite, robbers)
+                pass
+                # robber = create_object(Robber, all_sprite, robbers)
             if event.type == create_bonus:
                 bonus.rect.x, bonus.rect.y = random.randrange(1212), random.randrange(850)
+            if event.type == update_settings_enemy:
+                speed += 1
+                hp += 5
         all_hit_checks()
         all_sprite.update()
         screen.fill(GREEN)

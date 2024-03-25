@@ -1,9 +1,7 @@
-
 from Settings import *
 from Sword import Sword
 import bow
 from NPC import NPC
-
 
 pygame.init()
 
@@ -11,11 +9,11 @@ pygame.init()
 class Player(pygame.sprite.Sprite):
     """class of the player's object """
 
-    def __init__(self, x: int, y: int, sword_group, all_sprite, arrow_group, npc_group):
+    def __init__(self, pos: tuple, sword_group, all_sprite, arrow_group, npc_group):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('Sprite/Game/Player/Walk_left/walk left1.png').convert_alpha()
+        self.image = pygame.image.load('Sprite/Game/Player/Walk_left/walk_left1.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (38, 74))
-        self.rect = self.image.get_rect(center=(x, y))
+        self.rect = self.image.get_rect(center=pos)
         self.gold = 1000
         self.speed = 2
         self.see = 'left'
@@ -173,4 +171,3 @@ class Player(pygame.sprite.Sprite):
                 self.create_arrow()
         if keys[pygame.K_r]:
             self.create_npc()
-
