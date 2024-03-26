@@ -3,7 +3,7 @@ import pygame
 
 import Ui_menu as ui
 from Settings import *
-from mobs import Zombie
+from mobs import Zombie, Robber
 from player import Player
 from tower import Tower
 from bonus import Bonus
@@ -70,13 +70,13 @@ players.add(player)
 all_sprite.add(player)
 
 """mob settings"""
-hp = 10
-speed = 1
-"""first mob"""
-zombie = create_object(Zombie, all_sprite, zombies, speed, hp)
+mob_settings = {'hp_zombie': 10,
+                'hp_robber': 5}
+"""first zombie"""
+zombie = create_object(Zombie, all_sprite, zombies, mob_settings['hp_zombie'])
 
 """First robber"""
-#robber = create_object(Robber, all_sprite, robbers)
+robber = create_object(Robber, all_sprite, robbers, mob_settings['hp_robber'])
 
 """Menu Settings"""
 name_game = ui.text('Springdale', name_font)
@@ -207,22 +207,21 @@ def menu():
 
 
 def main():
-    global zombie, robber, hp, speed
+    global zombie, robber
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
             if event.type == create_zombie:
                 for i in range(3):
-                    zombie = create_object(Zombie, all_sprite, zombies, speed, hp)
+                    zombie = create_object(Zombie, all_sprite, zombies, mob_settings['hp_zombie'])
             if event.type == create_robber:
-                pass
-                # robber = create_object(Robber, all_sprite, robbers)
+                robber = create_object(Robber, all_sprite, robbers, mob_settings['hp_robber'])
             if event.type == create_bonus:
                 bonus.rect.x, bonus.rect.y = random.randrange(1212), random.randrange(850)
             if event.type == update_settings_enemy:
-                speed += 1
-                hp += 5
+                for key in mob_settings:
+                    mob_settings[key] += 5
         all_hit_checks()
         all_sprite.update()
         screen.fill(GREEN)
