@@ -12,8 +12,8 @@ class NPC(pygame.sprite.Sprite):
         self.can_arrow = True
         self.arrow_time = None
         self.arrow_duration_cooldown = 1500
-        self.ARROW_GROUP = arrow_group
-        self.ALL_SPRITES = all_sprite
+        self.arrow_group = arrow_group
+        self.all_sprite = all_sprite
 
     def cooldown(self):
         current_time = pygame.time.get_ticks()
@@ -25,9 +25,9 @@ class NPC(pygame.sprite.Sprite):
         if self.can_arrow:
             self.can_arrow = False
             self.arrow_time = pygame.time.get_ticks()
-            arrow = Arrow(self.rect.x, self.rect.y + 40, self.rect.x)
-            self.ARROW_GROUP.add(arrow)
-            self.ALL_SPRITES.add(arrow)
+            arrow = Arrow(self.rect.x, self.rect.y + 40, self.rect.x, 'left')
+            self.arrow_group.add(arrow)
+            self.all_sprite.add(arrow)
             return arrow
 
     def update(self):
