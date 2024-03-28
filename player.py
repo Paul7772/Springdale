@@ -11,12 +11,24 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self, pos: tuple, sword_group, all_sprite, arrow_group, npc_group):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('Sprite/Game/Player/Walk_left/walk_left1.png').convert_alpha()
+        self.image_dict = {
+            'left': ['Walk_left/walk_left1.png', 'Walk_left/walk_left2.png',
+                     'Walk_left/walk_left3.png', 'Walk_left/walk_left4.png'],
+            'right': ['Walk_right/walk_right1.png', 'Walk_right/walk_right2.png',
+                      'Walk_right/walk_right3.png', 'Walk_right/walk_right4.png'],
+            'up': ['Walk_up/walk_up1.png', 'Walk_up/walk_up2.png',
+                   'Walk_up/walk_up3.png', 'Walk_up/walk_up4.png'],
+            'down': ['Walk_down/walk_down1.png', 'Walk_down/walk_down2.png',
+                     'Walk_down/walk_down3.png', 'Walk_down/walk_down4.png']
+        }
+        self.index = 0
+        self.see = 'left'
+        self.image = pygame.image.load(f'Sprite/Game/Player/{self.image_dict[self.see][self.index]}').convert_alpha()
         self.image = pygame.transform.scale(self.image, (38, 74))
         self.rect = self.image.get_rect(center=pos)
-        self.gold = 1000
+        self.score = 0
+        self.gold = 200
         self.speed = 2
-        self.see = 'left'
         self.hp = 20
         self.max_hp = 20
         self.index_weapon = 0
@@ -49,32 +61,50 @@ class Player(pygame.sprite.Sprite):
         self.regeneration_time = None
         self.can_regeneration = True
         self.regeneration_cooldown = 1500
+        self.next_index = 0
+
+    def index_update(self):
+        self.next_index += 10
+        if self.next_index >= 100:
+            self.index += 1
+            self.next_index = 0
+        for key in self.image_dict:
+            if self.index >= len(self.image_dict[key]):
+                self.index = 0
 
     def walk(self, keys):
         if keys[pygame.K_a]:
+            """moving to the left"""
             if self.rect.x >= 0:
                 self.rect.x -= self.speed
                 self.see = 'left'
             else:
                 self.rect.x = 0
+            self.index_update()
         if keys[pygame.K_d]:
+            """moving to the right"""
             if self.rect.x <= 1212:
                 self.rect.x += self.speed
                 self.see = 'right'
             else:
                 self.rect.x = 1212
+            self.index_update()
         if keys[pygame.K_s]:
+            """upward movement"""
             if self.rect.y <= 826:
                 self.rect.y += self.speed
                 self.see = 'down'
             else:
                 self.rect.y = 826
+            self.index_update()
         if keys[pygame.K_w]:
+            """downward movement"""
             if self.rect.y >= 0:
                 self.rect.y -= self.speed
                 self.see = 'up'
             else:
                 self.rect.y = 0
+            self.index_update()
 
     def regeneration(self):
         if self.hp < self.max_hp:
@@ -103,15 +133,15 @@ class Player(pygame.sprite.Sprite):
                 self.can_arrow = False
                 self.arrow_time = pygame.time.get_ticks()
                 self.number_of_arrows -= 1
-                arrow = bow.Arrow(self.rect.x, self.rect.y + 40, self.rect.x)
+                arrow = bow.Arrow(self.rect.x, self.rect.y + 40, self.rect.x, self.see)
                 self.arrow_group.add(arrow)
                 self.all_sprites.add(arrow)
 
     def create_npc(self):
         if self.can_npc_create:
             if self.npc_count <= 25:
-                if self.gold >= 200:
-                    self.gold -= 200
+                if self.gold >= 65:
+                    self.gold -= 65
                     self.can_npc_create = False
                     self.npc_create_time = pygame.time.get_ticks()
                     npc = NPC(self.rect.x, self.rect.y, self.all_sprites, self.arrow_group)
@@ -171,3 +201,5 @@ class Player(pygame.sprite.Sprite):
                 self.create_arrow()
         if keys[pygame.K_r]:
             self.create_npc()
+        self.image = pygame.image.load(f'Sprite/Game/Player/{self.image_dict[self.see][self.index]}').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (38, 74))
