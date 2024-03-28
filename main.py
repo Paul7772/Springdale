@@ -1,5 +1,4 @@
 # TODO: обязательно сделать анимацию
-import pygame
 
 import Ui_menu as ui
 from Settings import *
@@ -40,6 +39,9 @@ pygame.time.set_timer(create_bonus, 15_000)
 
 update_settings_enemy = pygame.USEREVENT + 4
 pygame.time.set_timer(update_settings_enemy, 40_000)
+
+score_update = pygame.USEREVENT + 5
+pygame.time.set_timer(score_update, 1_000)
 
 """Group"""
 all_sprite = pygame.sprite.Group()
@@ -90,7 +92,7 @@ quit_button = ui.Button(660, 550, 'Sprite/Menu/quit_button.png', 275, 100)
 ui_menu_settings.add(quit_button)
 
 """Tower"""
-tower = Tower(1300, 400)
+tower = Tower(1_300, 400)
 towers.add(tower)
 all_sprite.add(tower)
 
@@ -167,6 +169,8 @@ def create_ui_game():
     screen.blit(resources_font_create('base HP', tower.hp, tower.max_hp), (695, 15))
     screen.blit(create_frame(200, 40, FRAME_RESOURCE), (420, 11))
     screen.blit(resources_font_create('arrows', player.number_of_arrows, '+∞'), (450, 15))
+    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (950, 11))
+    screen.blit(resources_font_create('score', player.score, '+∞'), (990, 15))
 
 
 def all_hit_checks():
@@ -207,13 +211,13 @@ def menu():
 
 
 def main():
-    global zombie, robber
+    global zombie, robber, player
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
             if event.type == create_zombie:
-                for i in range(3):
+                for i in range(6):
                     zombie = create_object(Zombie, all_sprite, zombies, mob_settings['hp_zombie'])
             if event.type == create_robber:
                 robber = create_object(Robber, all_sprite, robbers, mob_settings['hp_robber'])
@@ -222,6 +226,8 @@ def main():
             if event.type == update_settings_enemy:
                 for key in mob_settings:
                     mob_settings[key] += 5
+            if event.type == score_update:
+                player.score += 1
         all_hit_checks()
         all_sprite.update()
         screen.fill(GREEN)
@@ -229,6 +235,11 @@ def main():
         create_ui_game()
         clock.tick(FPS)
         pygame.display.flip()
+
+
+menu()
+
+
 
 
 menu()
