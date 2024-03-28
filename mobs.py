@@ -1,4 +1,3 @@
-import pygame.sprite
 
 from Settings import *
 
@@ -17,12 +16,16 @@ class Enemy(pygame.sprite.Sprite):
         self.speed: int = speed
         self.hp: int = hp
         self.damage: int = damage
+        self.next_index = 0
 
     def update(self):
         self.rect.x += self.speed
         if self.hp <= 0 or self.rect.x > 1300:
             self.kill()
-        self.index += 1
+        self.next_index += 10
+        if self.next_index >= 100:
+            self.index += 1
+            self.next_index = 0
         if self.index >= len(self.image_list):
             self.index = 0
         self.image = pygame.image.load(f'Sprite/Game/enemy/{self.image_list[self.index]}')
