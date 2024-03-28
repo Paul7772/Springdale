@@ -27,10 +27,8 @@ It includes computer graphics and sound libraries designed to be used with the P
 
 ---
 
-> 1. Added a bonus that will appear every 15 seconds.
-> And when faced with a bonus,
-> the number of your arrows will increase.
-> 2. Nothing else was added. Just bugfix.
+> In the latest update, animations have been added and 
+> the action of the arrows has changed
 
 ## Short description:
 
