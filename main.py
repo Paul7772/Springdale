@@ -7,7 +7,6 @@ from player import Player
 from tower import Tower
 from bonus import Bonus
 
-
 pygame.init()
 
 """Music"""
@@ -38,7 +37,7 @@ create_bonus = pygame.USEREVENT + 3
 pygame.time.set_timer(create_bonus, 15_000)
 
 update_settings_enemy = pygame.USEREVENT + 4
-pygame.time.set_timer(update_settings_enemy, 40_000)
+pygame.time.set_timer(update_settings_enemy, 10_000)
 
 score_update = pygame.USEREVENT + 5
 pygame.time.set_timer(score_update, 1_000)
@@ -72,13 +71,16 @@ players.add(player)
 all_sprite.add(player)
 
 """mob settings"""
-mob_settings = {'hp_zombie': 10,
-                'hp_robber': 5}
+mob_hp = {'zombie': 10,
+          'robber': 5}
+mob_speed = {'zombie': 1,
+             'robber': 2}
+
 """first zombie"""
-zombie = create_object(Zombie, all_sprite, zombies, mob_settings['hp_zombie'])
+zombie = create_object(Zombie, all_sprite, zombies, mob_hp['zombie'], mob_speed['zombie'])
 
 """First robber"""
-robber = create_object(Robber, all_sprite, robbers, mob_settings['hp_robber'])
+robber = create_object(Robber, all_sprite, robbers, mob_hp['robber'], mob_speed['robber'])
 
 """Menu Settings"""
 name_game = ui.text('Springdale', name_font)
@@ -105,10 +107,9 @@ bonuses.add(bonus)
 def check_click(button):
     pos = pygame.mouse.get_pos()
     keys = pygame.mouse.get_pressed()
-    if button.rect.x <= pos[0] <= button.rect.x + button.width:
-        if button.rect.y <= pos[1] <= button.rect.y + button.height:
-            if keys[0]:
-                return True
+    if button.rect.collidepoint(pos):
+        if keys[0]:
+            return True
     else:
         return False
 
@@ -218,16 +219,18 @@ def main():
                 exit()
             if event.type == create_zombie:
                 for i in range(6):
-                    zombie = create_object(Zombie, all_sprite, zombies, mob_settings['hp_zombie'])
+                    zombie = create_object(Zombie, all_sprite, zombies, mob_hp['zombie'], mob_speed['zombie'])
             if event.type == create_robber:
-                robber = create_object(Robber, all_sprite, robbers, mob_settings['hp_robber'])
+                robber = create_object(Robber, all_sprite, robbers, mob_hp['robber'], mob_speed['robber'])
             if event.type == create_bonus:
                 bonus.rect.x, bonus.rect.y = random.randrange(1212), random.randrange(850)
-            if event.type == update_settings_enemy:
-                for key in mob_settings:
-                    mob_settings[key] += 5
             if event.type == score_update:
                 player.score += 1
+            if event.type == update_settings_enemy:
+                for key in mob_hp:
+                    mob_hp[key] += 10
+                for key in mob_speed:
+                    mob_speed[key] += 1
         all_hit_checks()
         all_sprite.update()
         screen.fill(GREEN)
@@ -238,9 +241,3 @@ def main():
 
 
 menu()
-
-
-
-
-menu()
-

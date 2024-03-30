@@ -37,8 +37,8 @@ def icon_weapon(player):
     return icon
 
 
-def create_object(classes, all_sprite, group, hp: int):
-    objects = classes(hp)
+def create_object(classes, all_sprite, group, hp: int, speed):
+    objects = classes(hp, speed)
     group.add(objects)
     all_sprite.add(objects)
     return objects

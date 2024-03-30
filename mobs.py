@@ -1,4 +1,3 @@
-
 from Settings import *
 
 pygame.init()
@@ -33,15 +32,15 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Zombie(Enemy):
-    def __init__(self, hp):
+    def __init__(self, hp, speed):
         pygame.sprite.Sprite.__init__(self)
         super().__init__(['zombie/Zombie_walk1.png', 'zombie/Zombie_walk2.png'], (5, random.randint(10, 880)),
-                         1, hp, 2, (48, 84))
+                         speed, hp, 2, (48, 84))
 
 
 class Robber(Enemy):
-    def __init__(self, hp):
+    def __init__(self, hp, speed):
         pygame.sprite.Sprite.__init__(self)
         super().__init__(['robber/robber_walk1.png', 'robber/robber_walk2.png'],
-                         (5, random.randint(10, 880)), 2, hp, 1, (38, 84))
+                         (5, random.randint(10, 880)), speed, hp, 1, (38, 84))
         self.amount_of_theft = 25
