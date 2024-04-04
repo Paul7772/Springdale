@@ -1,4 +1,4 @@
-
+ 
 import Ui_menu as ui
 from Settings import *
 import sys

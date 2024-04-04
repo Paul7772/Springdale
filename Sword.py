@@ -11,6 +11,7 @@ class Sword(pygame.sprite.Sprite):
         self.damage = self.level * 10
         if see == 'left':
             self.image = pygame.image.load(self.list_image[0]).convert_alpha()
+            print('huy')
             self.image = pygame.transform.scale(self.image, (64, 64))
             self.rect = self.image.get_rect(midright=pos)
         elif see == 'right':
