@@ -9,8 +9,9 @@ pygame.init()
 class Player(pygame.sprite.Sprite):
     """class of the player's object """
 
-    def __init__(self, pos: tuple, sword_group, all_sprite, arrow_group, npc_group):
+    def __init__(self, pos, groups, enemy_group):
         pygame.sprite.Sprite.__init__(self)
+        super().__init__(groups)
         self.image_dict = {
             'left': ['Walk_left/walk_left1.png', 'Walk_left/walk_left2.png',
                      'Walk_left/walk_left3.png', 'Walk_left/walk_left4.png'],
@@ -26,9 +27,10 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load(f'Sprite/Game/Player/{self.image_dict[self.see][self.index]}').convert_alpha()
         self.image = pygame.transform.scale(self.image, (38, 74))
         self.rect = self.image.get_rect(center=pos)
+        self.directions = pygame.math.Vector2()
         self.score = 0
         self.gold = 200
-        self.speed = 2
+        self.speed = 3
         self.hp = 20
         self.max_hp = 20
         self.index_weapon = 0
@@ -41,10 +43,11 @@ class Player(pygame.sprite.Sprite):
         self.can_attack = True
         self.attack_time = None
         self.attack_duration_cooldown = 1000
-        self.sword_group = sword_group
-        self.arrow_group = arrow_group
-        self.all_sprites = all_sprite
-        self.npc_group = npc_group
+        self.enemy_group = enemy_group
+        # self.sword_group = sword_group
+        # self.arrow_group = arrow_group
+        # self.all_sprites = all_sprite
+        # self.npc_group = npc_group
         """break attack"""
         self.attack_break_time = 200
         """Create arrow"""
@@ -63,143 +66,195 @@ class Player(pygame.sprite.Sprite):
         self.regeneration_cooldown = 1500
         self.next_index = 0
 
-    def index_update(self):
-        self.next_index += 10
-        if self.next_index >= 100:
-            self.index += 1
-            self.next_index = 0
-        for key in self.image_dict:
-            if self.index >= len(self.image_dict[key]):
-                self.index = 0
-
-    def walk(self, keys):
+    # def index_update(self):
+    #    self.next_index += 10
+    #    if self.next_index >= 100:
+    #        self.index += 1
+    #        self.next_index = 0
+    #    for key in self.image_dict:
+    #        if self.index >= len(self.image_dict[key]):
+    #            self.index = 0
+    def input(self):
+        keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
             """moving to the left"""
             if self.rect.x >= 0:
-                self.rect.x -= self.speed
+                self.directions.x = -1
                 self.see = 'left'
             else:
-                self.rect.x = 0
-            self.index_update()
-        if keys[pygame.K_d]:
+                self.directions.x = 0
+        # self.index_update()
+
+        elif keys[pygame.K_d]:
             """moving to the right"""
-            if self.rect.x <= 1212:
-                self.rect.x += self.speed
+            if self.rect.x <= 1250:
+                self.directions.x = 1
                 self.see = 'right'
             else:
-                self.rect.x = 1212
-            self.index_update()
+                self.directions.x = 0
+            # self.index_update()
+        else:
+            self.directions.x = 0
+
         if keys[pygame.K_s]:
             """upward movement"""
-            if self.rect.y <= 826:
-                self.rect.y += self.speed
+            if self.rect.y <= 900:
+                self.directions.y = 1
                 self.see = 'down'
             else:
-                self.rect.y = 826
-            self.index_update()
-        if keys[pygame.K_w]:
+                self.directions.y = 0
+            # self.index_update()
+
+        elif keys[pygame.K_w]:
             """downward movement"""
             if self.rect.y >= 0:
-                self.rect.y -= self.speed
+                self.directions.y = -1
                 self.see = 'up'
             else:
-                self.rect.y = 0
-            self.index_update()
-
-    def regeneration(self):
-        if self.hp < self.max_hp:
-            if self.can_regeneration:
-                self.hp += 1
-                self.regeneration_time = pygame.time.get_ticks()
-                self.can_regeneration = False
-
-    def create_sword(self):
-        direction_map = {
-            'left': (self.rect.midleft[0], self.rect.midleft[1]),
-            'right': (self.rect.midright[0], self.rect.midright[1]),
-            'down': (self.rect.midbottom[0], self.rect.midbottom[1]),
-            'up': (self.rect.midtop[0], self.rect.midtop[1])}
-        if self.can_attack:
-            self.can_attack = False
-            self.attack_time = pygame.time.get_ticks()
-            sword = Sword(direction_map[self.see][0], direction_map[self.see][1], self.see)
-            self.sword_group.add(sword)
-            self.all_sprites.add(sword)
-            self.speed = 0
-
-    def create_arrow(self):
-        if self.can_arrow:
-            if self.number_of_arrows > 0:
-                self.can_arrow = False
-                self.arrow_time = pygame.time.get_ticks()
-                self.number_of_arrows -= 1
-                arrow = bow.Arrow(self.rect.x, self.rect.y + 40, self.rect.x, self.see)
-                self.arrow_group.add(arrow)
-                self.all_sprites.add(arrow)
-
-    def create_npc(self):
-        if self.can_npc_create:
-            if self.npc_count <= 25:
-                if self.gold >= 65:
-                    self.gold -= 65
-                    self.can_npc_create = False
-                    self.npc_create_time = pygame.time.get_ticks()
-                    npc = NPC(self.rect.x, self.rect.y, self.all_sprites, self.arrow_group)
-                    self.npc_group.add(npc)
-                    self.all_sprites.add(npc)
-                    self.npc_count += 1
-
-    def switch_weapon(self, keys):
-        if keys[pygame.K_q] and self.can_switch_weapon:
-            self.can_switch_weapon = False
-            self.weapon_switch_time = pygame.time.get_ticks()
-            if self.index_weapon < len(list_weapon) - 1:
-                self.index_weapon += 1
-            else:
-                self.index_weapon = 0
-            self.weapon = list_weapon[self.index_weapon]
-
-    def break_attack(self):
-        current_time = pygame.time.get_ticks()
-        if self.sword_group:
-            if current_time - self.attack_time >= self.attack_break_time:
-                for sword in self.sword_group:
-                    sword.kill()
-                    self.speed = 2
+                self.directions.y = 0
         else:
-            self.speed = 2
+            self.directions.y = 0
 
-    def cooldown(self, time, can, duration_cooldown):
-        current_time = pygame.time.get_ticks()
-        if not can:
-            if current_time - time >= duration_cooldown:
-                can = True
-        return can
+    def move(self, speed):
+        if self.directions.magnitude() != 0:
+            self.directions = self.directions.normalize()
+        self.rect.center += self.directions * speed
 
-    def all_cooldown(self):
-        self.can_switch_weapon = self.cooldown(self.weapon_switch_time, self.can_switch_weapon,
-                                               self.switch_duration_cooldown)
-        self.can_attack = self.cooldown(self.attack_time, self.can_attack, self.attack_duration_cooldown)
-        self.can_arrow = self.cooldown(self.arrow_time, self.can_arrow, self.arrow_duration_cooldown)
-        self.can_npc_create = self.cooldown(self.npc_create_time, self.can_npc_create, self.npc_create_cooldown)
-        self.can_regeneration = self.cooldown(self.regeneration_time, self.can_regeneration, self.regeneration_cooldown)
+    def collision(self, direction):
+
 
     def update(self):
-        if self.hp <= 0:
-            exit()
-        keys = pygame.key.get_pressed()
-        mouse_keys = pygame.mouse.get_pressed()
-        self.walk(keys)
-        self.regeneration()
-        self.switch_weapon(keys)
-        self.all_cooldown()
-        self.break_attack()
-        if mouse_keys[0]:
-            if self.weapon == 'sword':
-                self.create_sword()
-            else:
-                self.create_arrow()
-        if keys[pygame.K_r]:
-            self.create_npc()
-        self.image = pygame.image.load(f'Sprite/Game/Player/{self.image_dict[self.see][self.index]}').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (38, 74))
+        self.input()
+        self.move(self.speed)
+    # def walk(self, keys):
+    #    if keys[pygame.K_a]:
+    #        """moving to the left"""
+    #        if self.rect.x >= 0:
+    #            self.rect.x -= self.speed
+    #            self.see = 'left'
+    #        else:
+    #            self.rect.x = 0
+    #        self.index_update()
+    #    if keys[pygame.K_d]:
+    #        """moving to the right"""
+    #        if self.rect.x <= 1212:
+    #            self.rect.x += self.speed
+    #            self.see = 'right'
+    #        else:
+    #            self.rect.x = 1212
+    #        self.index_update()
+    #    if keys[pygame.K_s]:
+    #        """upward movement"""
+    #        if self.rect.y <= 826:
+    #            self.rect.y += self.speed
+    #            self.see = 'down'
+    #        else:
+    #            self.rect.y = 826
+    #        self.index_update()
+    #    if keys[pygame.K_w]:
+    #        """downward movement"""
+    #        if self.rect.y >= 0:
+    #            self.rect.y -= self.speed
+    #            self.see = 'up'
+    #        else:
+    #            self.rect.y = 0
+    #        self.index_update()
+#
+# def regeneration(self):
+#    if self.hp < self.max_hp:
+#        if self.can_regeneration:
+#            self.hp += 1
+#            self.regeneration_time = pygame.time.get_ticks()
+#            self.can_regeneration = False
+#
+# def create_sword(self):
+#    direction_map = {
+#        'left': (self.rect.midleft[0], self.rect.midleft[1]),
+#        'right': (self.rect.midright[0], self.rect.midright[1]),
+#        'down': (self.rect.midbottom[0], self.rect.midbottom[1]),
+#        'up': (self.rect.midtop[0], self.rect.midtop[1])}
+#    if self.can_attack:
+#        self.can_attack = False
+#        self.attack_time = pygame.time.get_ticks()
+#        sword = Sword(direction_map[self.see][0], direction_map[self.see][1], self.see)
+#        self.sword_group.add(sword)
+#        self.all_sprites.add(sword)
+#        self.speed = 0
+#
+# def create_arrow(self):
+#    if self.can_arrow:
+#        if self.number_of_arrows > 0:
+#            self.can_arrow = False
+#            self.arrow_time = pygame.time.get_ticks()
+#            self.number_of_arrows -= 1
+#            arrow = bow.Arrow(self.rect.x, self.rect.y + 40, self.rect.x, self.see)
+#            self.arrow_group.add(arrow)
+#            self.all_sprites.add(arrow)
+#
+# def create_npc(self):
+#    if self.can_npc_create:
+#        if self.npc_count <= 25:
+#            if self.gold >= 65:
+#                self.gold -= 65
+#                self.can_npc_create = False
+#                self.npc_create_time = pygame.time.get_ticks()
+#                npc = NPC(self.rect.x, self.rect.y, self.all_sprites, self.arrow_group)
+#                self.npc_group.add(npc)
+#                self.all_sprites.add(npc)
+#                self.npc_count += 1
+#
+# def switch_weapon(self, keys):
+#    if keys[pygame.K_q] and self.can_switch_weapon:
+#        self.can_switch_weapon = False
+#        self.weapon_switch_time = pygame.time.get_ticks()
+#        if self.index_weapon < len(list_weapon) - 1:
+#            self.index_weapon += 1
+#        else:
+#            self.index_weapon = 0
+#        self.weapon = list_weapon[self.index_weapon]
+#
+# def break_attack(self):
+#    current_time = pygame.time.get_ticks()
+#    if self.sword_group:
+#        if current_time - self.attack_time >= self.attack_break_time:
+#            for sword in self.sword_group:
+#                sword.kill()
+#                self.speed = 2
+#    else:
+#        self.speed = 2
+#
+# def cooldown(self, time, can, duration_cooldown):
+#    current_time = pygame.time.get_ticks()
+#    if not can:
+#        if current_time - time >= duration_cooldown:
+#            can = True
+#    return can
+#
+# def all_cooldown(self):
+#    self.can_switch_weapon = self.cooldown(self.weapon_switch_time, self.can_switch_weapon,
+#                                           self.switch_duration_cooldown)
+#    self.can_attack = self.cooldown(self.attack_time, self.can_attack, self.attack_duration_cooldown)
+#    self.can_arrow = self.cooldown(self.arrow_time, self.can_arrow, self.arrow_duration_cooldown)
+#    self.can_npc_create = self.cooldown(self.npc_create_time, self.can_npc_create, self.npc_create_cooldown)
+#    self.can_regeneration = self.cooldown(self.regeneration_time, self.can_regeneration, self.regeneration_cooldown)
+#
+# def update(self):
+#    if self.hp <= 0:
+#        exit()
+#    keys = pygame.key.get_pressed()
+#    mouse_keys = pygame.mouse.get_pressed()
+#    self.walk(keys)
+#    self.regeneration()
+#    self.switch_weapon(keys)
+#    self.all_cooldown()
+#    self.break_attack()
+#    if mouse_keys[0]:
+#        if self.weapon == 'sword':
+#            self.create_sword()
+#        else:
+#            self.create_arrow()
+#    if keys[pygame.K_r]:
+#        self.create_npc()
+#    self.image = pygame.image.load(f'Sprite/Game/Player/{self.image_dict[self.see][self.index]}').convert_alpha()
+#    self.image = pygame.transform.scale(self.image, (38, 74))
+#
