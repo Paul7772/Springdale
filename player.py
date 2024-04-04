@@ -9,7 +9,7 @@ pygame.init()
 class Player(pygame.sprite.Sprite):
     """class of the player's object """
 
-    def __init__(self, pos: tuple, sword_group, all_sprite, arrow_group, npc_group):
+    def __init__(self, pos, sword_group, arrow_group, all_sprite, npc_group):
         pygame.sprite.Sprite.__init__(self)
         self.image_dict = {
             'left': ['Walk_left/walk_left1.png', 'Walk_left/walk_left2.png',
@@ -26,9 +26,10 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load(f'Sprite/Game/Player/{self.image_dict[self.see][self.index]}').convert_alpha()
         self.image = pygame.transform.scale(self.image, (38, 74))
         self.rect = self.image.get_rect(center=pos)
+        self.directions = pygame.math.Vector2()
         self.score = 0
         self.gold = 200
-        self.speed = 2
+        self.speed = 3
         self.hp = 20
         self.max_hp = 20
         self.index_weapon = 0
@@ -72,39 +73,85 @@ class Player(pygame.sprite.Sprite):
             if self.index >= len(self.image_dict[key]):
                 self.index = 0
 
-    def walk(self, keys):
+    def input(self):
+        keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
             """moving to the left"""
             if self.rect.x >= 0:
-                self.rect.x -= self.speed
+                self.directions.x = -1
                 self.see = 'left'
             else:
-                self.rect.x = 0
+                self.directions.x = 0
             self.index_update()
-        if keys[pygame.K_d]:
+
+        elif keys[pygame.K_d]:
             """moving to the right"""
-            if self.rect.x <= 1212:
-                self.rect.x += self.speed
+            if self.rect.x <= 1250:
+                self.directions.x = 1
                 self.see = 'right'
             else:
-                self.rect.x = 1212
+                self.directions.x = 0
             self.index_update()
+        else:
+            self.directions.x = 0
+
         if keys[pygame.K_s]:
             """upward movement"""
-            if self.rect.y <= 826:
-                self.rect.y += self.speed
+            if self.rect.y <= 900:
+                self.directions.y = 1
                 self.see = 'down'
             else:
-                self.rect.y = 826
+                self.directions.y = 0
             self.index_update()
-        if keys[pygame.K_w]:
+
+        elif keys[pygame.K_w]:
             """downward movement"""
             if self.rect.y >= 0:
-                self.rect.y -= self.speed
+                self.directions.y = -1
                 self.see = 'up'
             else:
-                self.rect.y = 0
+                self.directions.y = 0
             self.index_update()
+        else:
+            self.directions.y = 0
+
+    def move(self, speed):
+        self.rect.center += self.directions * speed
+
+
+    # def walk(self, keys):
+    #    if keys[pygame.K_a]:
+    #        """moving to the left"""
+    #        if self.rect.x >= 0:
+    #            self.rect.x -= self.speed
+    #            self.see = 'left'
+    #        else:
+    #            self.rect.x = 0
+    #        self.index_update()
+    #    if keys[pygame.K_d]:
+    #        """moving to the right"""
+    #        if self.rect.x <= 1212:
+    #            self.rect.x += self.speed
+    #            self.see = 'right'
+    #        else:
+    #            self.rect.x = 1212
+    #        self.index_update()
+    #    if keys[pygame.K_s]:
+    #        """upward movement"""
+    #        if self.rect.y <= 826:
+    #            self.rect.y += self.speed
+    #            self.see = 'down'
+    #        else:
+    #            self.rect.y = 826
+    #        self.index_update()
+    #    if keys[pygame.K_w]:
+    #        """downward movement"""
+    #        if self.rect.y >= 0:
+    #            self.rect.y -= self.speed
+    #            self.see = 'up'
+    #        else:
+    #            self.rect.y = 0
+    #        self.index_update()
 
     def regeneration(self):
         if self.hp < self.max_hp:
@@ -122,7 +169,7 @@ class Player(pygame.sprite.Sprite):
         if self.can_attack:
             self.can_attack = False
             self.attack_time = pygame.time.get_ticks()
-            sword = Sword(direction_map[self.see][0], direction_map[self.see][1], self.see)
+            sword = Sword((direction_map[self.see][0], direction_map[self.see][1]), self.see)
             self.sword_group.add(sword)
             self.all_sprites.add(sword)
             self.speed = 0
@@ -189,7 +236,8 @@ class Player(pygame.sprite.Sprite):
             exit()
         keys = pygame.key.get_pressed()
         mouse_keys = pygame.mouse.get_pressed()
-        self.walk(keys)
+        self.input()
+        self.move(self.speed)
         self.regeneration()
         self.switch_weapon(keys)
         self.all_cooldown()

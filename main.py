@@ -1,7 +1,7 @@
-# TODO: обязательно сделать анимацию
-
 import Ui_menu as ui
+
 from Settings import *
+import sys
 from mobs import Zombie, Robber
 from player import Player
 from tower import Tower
@@ -19,7 +19,6 @@ button_font = pygame.font.SysFont('Comic Sans MS', 70)
 
 screen = pygame.display.set_mode((W, H))
 pygame.display.set_caption('Springdale')
-
 clock = pygame.time.Clock()
 
 """Background"""
@@ -37,7 +36,7 @@ create_bonus = pygame.USEREVENT + 3
 pygame.time.set_timer(create_bonus, 15_000)
 
 update_settings_enemy = pygame.USEREVENT + 4
-pygame.time.set_timer(update_settings_enemy, 10_000)
+pygame.time.set_timer(update_settings_enemy, 40_000)
 
 score_update = pygame.USEREVENT + 5
 pygame.time.set_timer(score_update, 1_000)
@@ -195,8 +194,8 @@ def menu():
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                exit()
-
+                pygame.quit()
+                sys.exit()
         screen.blit(bg_menu, (0, 0))
         screen.blit(name_game, (390, 200))
         ui_menu_settings.draw(screen)
@@ -208,7 +207,7 @@ def menu():
             pygame.mixer.music.set_volume(0.1)
         if check_click(quit_button):
             exit()
-    main()
+    return True
 
 
 def main():
@@ -216,7 +215,8 @@ def main():
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                exit()
+                pygame.quit()
+                sys.exit()
             if event.type == create_zombie:
                 for i in range(6):
                     zombie = create_object(Zombie, all_sprite, zombies, mob_hp['zombie'], mob_speed['zombie'])
@@ -240,4 +240,8 @@ def main():
         pygame.display.flip()
 
 
-menu()
+if __name__ == '__main__':
+    start_game = menu()
+    if start_game:
+        main()
+
