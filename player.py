@@ -201,8 +201,6 @@ class Player(pygame.sprite.Sprite):
         self.can_regeneration = self.cooldown(self.regeneration_time, self.can_regeneration, self.regeneration_cooldown)
 
     def update(self):
-        if self.hp <= 0:
-            exit()
         keys = pygame.key.get_pressed()
         mouse_keys = pygame.mouse.get_pressed()
         self.input()

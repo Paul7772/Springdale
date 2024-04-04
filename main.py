@@ -1,4 +1,3 @@
- 
 import Ui_menu as ui
 from Settings import *
 import sys
@@ -6,6 +5,7 @@ from mobs import Zombie, Robber
 from player import Player
 from tower import Tower
 from bonus import Bonus
+from database import sqlupdate, printsql, printsql_by_name
 
 pygame.init()
 
@@ -14,8 +14,10 @@ pygame.mixer.music.load("Sound/Music.ogg")
 
 """font"""
 pygame.font.init()
-name_font = pygame.font.SysFont('Comic Sans MS', 110)
+name_font = pygame.font.SysFont('Comic Sans MS', 90)
 button_font = pygame.font.SysFont('Comic Sans MS', 70)
+leaderboard_font = pygame.font.SysFont('Comic Sans MS', 25)
+name_leaderboard_font = pygame.font.SysFont('Comic Sans MS', 50)
 
 screen = pygame.display.set_mode((W, H))
 pygame.display.set_caption('Springdale')
@@ -64,6 +66,8 @@ robbers = pygame.sprite.Group()
 
 bonuses = pygame.sprite.Group()
 
+pause_ui = pygame.sprite.Group()
+
 """Player"""
 player = Player((1200, H - 70), swords, all_sprite, arrows, npc_group)
 players.add(player)
@@ -91,6 +95,11 @@ ui_menu_settings.add(music_button)
 
 quit_button = ui.Button(660, 550, 'Sprite/Menu/quit_button.png', 275, 100)
 ui_menu_settings.add(quit_button)
+
+"""Pause settings"""
+text_leaderboard = ui.text('Leaderboard', name_leaderboard_font)
+quit_button_for_pause = ui.Button(660, 750, 'Sprite/Menu/quit_button.png', 275, 100)
+pause_ui.add(quit_button_for_pause)
 
 """Tower"""
 tower = Tower(1_300, 400)
@@ -190,6 +199,36 @@ def all_hit_checks():
     check_collision_with_bonus(players, bonuses)
 
 
+def create_leaderboard_text():
+    y = 200
+    num = 1
+    for column in printsql():
+        text = ui.text(f'{num}. name: {column[0]} - score {column[1]}', leaderboard_font)
+        screen.blit(text, (500, y))
+        num += 1
+        y += 25
+    return y
+
+
+def pause(name):
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        sqlupdate(name, player.score)
+        screen.blit(bg_menu, (0, 0))
+        screen.blit(text_leaderboard, (500, 80))
+        y = create_leaderboard_text()
+        you_in_leaderboard = ui.text(f'you. name: {printsql_by_name(name)[0]} - score {printsql_by_name(name)[1]}',
+                                     leaderboard_font)
+        screen.blit(you_in_leaderboard, (500, y))
+        pause_ui.draw(screen)
+        pygame.display.flip()
+        if check_click(quit_button_for_pause):
+            exit()
+
+
 def menu():
     while True:
         for event in pygame.event.get():
@@ -197,7 +236,7 @@ def menu():
                 pygame.quit()
                 sys.exit()
         screen.blit(bg_menu, (0, 0))
-        screen.blit(name_game, (390, 200))
+        screen.blit(name_game, (430, 200))
         ui_menu_settings.draw(screen)
         pygame.display.flip()
         if check_click(start_game_button):
@@ -238,10 +277,16 @@ def main():
         create_ui_game()
         clock.tick(FPS)
         pygame.display.flip()
+        if player.hp <= 0 or tower.hp <= 0:
+            break
+    return True
 
 
 if __name__ == '__main__':
+    name = input()
+    finish_game = True
     start_game = menu()
     if start_game:
-        main()
-
+        finish_game = main()
+    if finish_game:
+        pause(name)
