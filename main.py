@@ -1,5 +1,5 @@
-import Ui_menu as ui
 
+import Ui_menu as ui
 from Settings import *
 import sys
 from mobs import Zombie, Robber

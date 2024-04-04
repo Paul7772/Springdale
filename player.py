@@ -86,22 +86,25 @@ class Player(pygame.sprite.Sprite):
 
         elif keys[pygame.K_d]:
             """moving to the right"""
-            if self.rect.x <= 1250:
+            if self.rect.x <= 1212:
                 self.directions.x = 1
                 self.see = 'right'
             else:
                 self.directions.x = 0
+
             self.index_update()
+
         else:
             self.directions.x = 0
 
         if keys[pygame.K_s]:
             """upward movement"""
-            if self.rect.y <= 900:
+            if self.rect.y <= 812:
                 self.directions.y = 1
                 self.see = 'down'
             else:
                 self.directions.y = 0
+
             self.index_update()
 
         elif keys[pygame.K_w]:
@@ -111,47 +114,13 @@ class Player(pygame.sprite.Sprite):
                 self.see = 'up'
             else:
                 self.directions.y = 0
+
             self.index_update()
         else:
             self.directions.y = 0
 
     def move(self, speed):
         self.rect.center += self.directions * speed
-
-
-    # def walk(self, keys):
-    #    if keys[pygame.K_a]:
-    #        """moving to the left"""
-    #        if self.rect.x >= 0:
-    #            self.rect.x -= self.speed
-    #            self.see = 'left'
-    #        else:
-    #            self.rect.x = 0
-    #        self.index_update()
-    #    if keys[pygame.K_d]:
-    #        """moving to the right"""
-    #        if self.rect.x <= 1212:
-    #            self.rect.x += self.speed
-    #            self.see = 'right'
-    #        else:
-    #            self.rect.x = 1212
-    #        self.index_update()
-    #    if keys[pygame.K_s]:
-    #        """upward movement"""
-    #        if self.rect.y <= 826:
-    #            self.rect.y += self.speed
-    #            self.see = 'down'
-    #        else:
-    #            self.rect.y = 826
-    #        self.index_update()
-    #    if keys[pygame.K_w]:
-    #        """downward movement"""
-    #        if self.rect.y >= 0:
-    #            self.rect.y -= self.speed
-    #            self.see = 'up'
-    #        else:
-    #            self.rect.y = 0
-    #        self.index_update()
 
     def regeneration(self):
         if self.hp < self.max_hp:
@@ -214,7 +183,7 @@ class Player(pygame.sprite.Sprite):
                     sword.kill()
                     self.speed = 2
         else:
-            self.speed = 2
+            self.directions.y = 0
 
     def cooldown(self, time, can, duration_cooldown):
         current_time = pygame.time.get_ticks()
