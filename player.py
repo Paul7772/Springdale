@@ -9,7 +9,7 @@ pygame.init()
 class Player(pygame.sprite.Sprite):
     """class of the player's object """
 
-    def __init__(self, pos, sword_group, arrow_group, all_sprite, npc_group):
+    def __init__(self, pos, sword_group, all_sprite, arrow_group, npc_group):
         pygame.sprite.Sprite.__init__(self)
         self.image_dict = {
             'left': ['Walk_left/walk_left1.png', 'Walk_left/walk_left2.png',
@@ -138,7 +138,7 @@ class Player(pygame.sprite.Sprite):
         if self.can_attack:
             self.can_attack = False
             self.attack_time = pygame.time.get_ticks()
-            sword = Sword((direction_map[self.see][0], direction_map[self.see][1]), self.see)
+            sword = Sword(direction_map[self.see][0], direction_map[self.see][1], self.see)
             self.sword_group.add(sword)
             self.all_sprites.add(sword)
             self.speed = 0
