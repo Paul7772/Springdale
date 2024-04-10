@@ -51,6 +51,3 @@ def sqlupdate(name, score):
         update_score(name, score)
     else:
         add_to_the_database(name, score)
-
-
-

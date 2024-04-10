@@ -7,6 +7,7 @@ from tower import Tower
 from bonus import Bonus
 from database import sqlupdate, printsql, printsql_by_name
 
+
 pygame.init()
 
 """Music"""
