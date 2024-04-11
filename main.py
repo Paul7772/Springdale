@@ -1,3 +1,5 @@
+import pygame
+
 import Ui_menu as ui
 from Settings import *
 import sys
@@ -6,7 +8,7 @@ from player import Player
 from tower import Tower
 from bonus import Bonus
 from database import sqlupdate, printsql, printsql_by_name
-
+from InputBox import InputBox
 
 pygame.init()
 
@@ -230,23 +232,40 @@ def pause(name):
             exit()
 
 
+input_box = InputBox(500, 750, 50, 70, '')
+
+
 def menu():
+    name = None
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if name == None:
+                name = input_box.handle_event(event)
+            else:
+                pass
+
         screen.blit(bg_menu, (0, 0))
         screen.blit(name_game, (430, 200))
         ui_menu_settings.draw(screen)
+        input_box.update()
+        input_box.draw(screen)
         pygame.display.flip()
+        print(name)
         if check_click(start_game_button):
-            break
+            if name != None:
+                print(name)
+                break
+            else:
+                continue
         if check_click(music_button):
             pygame.mixer.music.play(-1)
             pygame.mixer.music.set_volume(0.1)
         if check_click(quit_button):
             exit()
+    print(name)
     return True
 
 
@@ -284,10 +303,10 @@ def main():
 
 
 if __name__ == '__main__':
-    name = input()
     finish_game = True
     start_game = menu()
-    if start_game:
-        finish_game = main()
-    if finish_game:
-        pause(name)
+    #if start_game:
+    #    finish_game = main()
+    #if finish_game:
+    #    pause(name)
+
