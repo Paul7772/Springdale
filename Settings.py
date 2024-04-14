@@ -8,8 +8,11 @@ GREEN = (0, 189, 0)
 
 FPS = 120
 
-FRAME_ICON = 'Sprite/Game/UI_Game/frame1.png'
-FRAME_RESOURCE = 'Sprite/Game/UI_Game/frame2.png'
+FRAME = {'hp': 'Sprite/Game/UI_Game/hp.png',
+         'gold_and_score': 'Sprite/Game/UI_Game/gold.png',
+         'arrows': 'Sprite/Game/UI_Game/arrows.png',
+         'weapon': 'Sprite/Game/UI_Game/player_weapon.png',
+         }
 
 BLACK = (0, 0, 0)
 pygame.init()

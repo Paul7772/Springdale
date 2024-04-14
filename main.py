@@ -1,14 +1,11 @@
-import pygame
-
+import sys
 import Ui_menu as ui
 from Settings import *
-import sys
+from bonus import Bonus
+from database import sqlupdate, printsql, printsql_by_name
 from mobs import Zombie, Robber
 from player import Player
 from tower import Tower
-from bonus import Bonus
-from database import sqlupdate, printsql, printsql_by_name
-from InputBox import InputBox
 
 pygame.init()
 
@@ -162,26 +159,27 @@ def check_hit_player(players1, zombies1):
             player1.can_regeneration = False
 
 
-def check_hit_tower(enemy_group, towers1):
+def check_hit_tower(enemy, towers1):
     """Tower check"""
-    hit_list = pygame.sprite.groupcollide(towers1, enemy_group, False, True)
+    global tower
+    hit_list = pygame.sprite.spritecollide(enemy, towers1, False)
     if hit_list:
-        for tower1, enemy2 in hit_list.items():
-            tower1.hp -= enemy2[0].damage
+        tower.hp -= enemy.damage
+        enemy.kill()
 
 
 def create_ui_game():
-    screen.blit(create_frame(90, 90, FRAME_ICON), (25, 780))
+    screen.blit(create_frame(90, 90, FRAME['weapon']), (25, 780))
     screen.blit(icon_weapon(player), (30, 785))
-    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (11, 11))
+    screen.blit(create_frame(200, 40, FRAME['hp']), (11, 11))
     screen.blit(resources_font_create('HP', player.hp, player.max_hp), (48, 15))
-    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (215, 11))
+    screen.blit(create_frame(200, 40, FRAME['gold_and_score']), (215, 11))
     screen.blit(resources_font_create('Gold', player.gold, '+∞'), (265, 15))
-    screen.blit(create_frame(300, 50, FRAME_RESOURCE), (630, 11))
+    screen.blit(create_frame(300, 50, FRAME['hp']), (630, 11))
     screen.blit(resources_font_create('base HP', tower.hp, tower.max_hp), (695, 15))
-    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (420, 11))
+    screen.blit(create_frame(200, 40, FRAME['hp']), (420, 11))
     screen.blit(resources_font_create('arrows', player.number_of_arrows, '+∞'), (450, 15))
-    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (950, 11))
+    screen.blit(create_frame(200, 40, FRAME['gold_and_score']), (950, 11))
     screen.blit(resources_font_create('score', player.score, '+∞'), (990, 15))
 
 
@@ -196,8 +194,10 @@ def all_hit_checks():
     check_hit_enemy(robbers, arrows)
     check_hit_enemy(npc_group, zombies)
     """check hit tower"""
-    check_hit_tower(zombies, towers)
-    check_hit_tower(robbers, towers)
+    for z in zombies:
+        check_hit_tower(z, towers)
+    for r in robbers:
+        check_hit_tower(r, towers)
     """check bonus"""
     check_collision_with_bonus(players, bonuses)
 
@@ -232,40 +232,35 @@ def pause(name):
             exit()
 
 
-input_box = InputBox(500, 750, 50, 70, '')
+# input_box = InputBox(500, 750, 50, 70, '')
 
 
 def menu():
-    name = None
+    # name = None
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if name == None:
-                name = input_box.handle_event(event)
-            else:
-                pass
+            # if name == None:
+            #    name = input_box.handle_event(event)
+            # else:
+            #    pass
 
         screen.blit(bg_menu, (0, 0))
         screen.blit(name_game, (430, 200))
         ui_menu_settings.draw(screen)
-        input_box.update()
-        input_box.draw(screen)
+        # input_box.update()
+        # input_box.draw(screen)
         pygame.display.flip()
-        print(name)
+
         if check_click(start_game_button):
-            if name != None:
-                print(name)
-                break
-            else:
-                continue
+            break
         if check_click(music_button):
             pygame.mixer.music.play(-1)
             pygame.mixer.music.set_volume(0.1)
         if check_click(quit_button):
             exit()
-    print(name)
     return True
 
 
@@ -304,9 +299,9 @@ def main():
 
 if __name__ == '__main__':
     finish_game = True
+    name = input('Write your nickname - ')
     start_game = menu()
-    #if start_game:
-    #    finish_game = main()
-    #if finish_game:
-    #    pause(name)
-
+    if start_game:
+        finish_game = main()
+    if finish_game:
+        pause(name)
