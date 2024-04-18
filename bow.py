@@ -43,3 +43,7 @@ class Arrow(pygame.sprite.Sprite):
         if (self.rect.x + self.distance <= self.positions_shot[0] or
                 self.rect.y + self.distance <= self.positions_shot[1]):
             self.kill()
+
+        if (self.rect.x + self.distance <= self.positions_shot[0] or
+                self.rect.y + self.distance <= self.positions_shot[1]):
+            self.kill()
