@@ -4,6 +4,8 @@ pygame.init()
 
 
 class Enemy(pygame.sprite.Sprite):
+    """class enemy"""
+
     def __init__(self, images: list, pos: tuple, speed: int, hp: int, damage: int, size: tuple):
         pygame.sprite.Sprite.__init__(self)
         self.image_list: list = images
@@ -32,6 +34,8 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Zombie(Enemy):
+    """Zombie class inherited from enemy"""
+
     def __init__(self, hp, speed):
         pygame.sprite.Sprite.__init__(self)
         super().__init__(['zombie/Zombie_walk1.png', 'zombie/Zombie_walk2.png'], (5, random.randint(10, 880)),
@@ -39,6 +43,8 @@ class Zombie(Enemy):
 
 
 class Robber(Enemy):
+    """Robber class inherited from enemy"""
+
     def __init__(self, hp, speed):
         pygame.sprite.Sprite.__init__(self)
         super().__init__(['robber/robber_walk1.png', 'robber/robber_walk2.png'],

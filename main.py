@@ -1,11 +1,13 @@
- 
+import sys
+import pygame
 import Ui_menu as ui
 from Settings import *
-import sys
+from bonus import Bonus
+from database import sqlupdate, printsql, printsql_by_name
 from mobs import Zombie, Robber
 from player import Player
 from tower import Tower
-from bonus import Bonus
+from InputBox import InputBox
 
 pygame.init()
 
@@ -14,8 +16,10 @@ pygame.mixer.music.load("Sound/Music.ogg")
 
 """font"""
 pygame.font.init()
-name_font = pygame.font.SysFont('Comic Sans MS', 110)
+name_font = pygame.font.SysFont('Comic Sans MS', 90)
 button_font = pygame.font.SysFont('Comic Sans MS', 70)
+leaderboard_font = pygame.font.SysFont('Comic Sans MS', 25)
+name_leaderboard_font = pygame.font.SysFont('Comic Sans MS', 50)
 
 screen = pygame.display.set_mode((W, H))
 pygame.display.set_caption('Springdale')
@@ -64,6 +68,8 @@ robbers = pygame.sprite.Group()
 
 bonuses = pygame.sprite.Group()
 
+pause_ui = pygame.sprite.Group()
+
 """Player"""
 player = Player((1200, H - 70), swords, all_sprite, arrows, npc_group)
 players.add(player)
@@ -76,21 +82,26 @@ mob_speed = {'zombie': 1,
              'robber': 2}
 
 """first zombie"""
-zombie = create_object(Zombie, all_sprite, zombies, mob_hp['zombie'], mob_speed['zombie'])
+zombie = create_enemy(Zombie, all_sprite, zombies, mob_hp['zombie'], mob_speed['zombie'])
 
 """First robber"""
-robber = create_object(Robber, all_sprite, robbers, mob_hp['robber'], mob_speed['robber'])
+robber = create_enemy(Robber, all_sprite, robbers, mob_hp['robber'], mob_speed['robber'])
 
 """Menu Settings"""
 name_game = ui.text('Springdale', name_font)
-start_game_button = ui.Button(660, 440, 'Sprite/Menu/start_button.png', 275, 100)
+start_game_button = ui.Button(660, 550, 'Sprite/Menu/start_button.png', 275, 100)
 ui_menu_settings.add(start_game_button)
 
 music_button = ui.Button(65, 65, 'Sprite/Menu/music_button.png', 100, 100)
 ui_menu_settings.add(music_button)
 
-quit_button = ui.Button(660, 550, 'Sprite/Menu/quit_button.png', 275, 100)
+quit_button = ui.Button(660, 660, 'Sprite/Menu/quit_button.png', 275, 100)
 ui_menu_settings.add(quit_button)
+
+"""Pause settings"""
+text_leaderboard = ui.text('Leaderboard', name_leaderboard_font)
+quit_button_for_pause = ui.Button(660, 750, 'Sprite/Menu/quit_button.png', 275, 100)
+pause_ui.add(quit_button_for_pause)
 
 """Tower"""
 tower = Tower(1_300, 400)
@@ -104,6 +115,7 @@ bonuses.add(bonus)
 
 
 def check_click(button):
+    """Checking the click on the button in the menu"""
     pos = pygame.mouse.get_pos()
     keys = pygame.mouse.get_pressed()
     if button.rect.collidepoint(pos):
@@ -114,6 +126,7 @@ def check_click(button):
 
 
 def check_collision_with_bonus(players1, bonuses1):
+    """ Checking the bonus selection """
     hit_list = pygame.sprite.groupcollide(players1, bonuses1, False, False)
     if hit_list:
         for obj1, obj2 in hit_list.items():
@@ -150,67 +163,117 @@ def check_hit_player(players1, zombies1):
             player1.can_regeneration = False
 
 
-def check_hit_tower(enemy_group, towers1):
+def check_hit_tower(enemy, towers1):
     """Tower check"""
-    hit_list = pygame.sprite.groupcollide(towers1, enemy_group, False, True)
+    global tower
+    hit_list = pygame.sprite.spritecollide(enemy, towers1, False)
     if hit_list:
-        for tower1, enemy2 in hit_list.items():
-            tower1.hp -= enemy2[0].damage
+        tower.hp -= enemy.damage
+        enemy.kill()
 
 
 def create_ui_game():
-    screen.blit(create_frame(90, 90, FRAME_ICON), (25, 780))
+    """Rendering the game interface"""
+    screen.blit(create_frame(90, 90, FRAME['weapon']), (25, 780))
     screen.blit(icon_weapon(player), (30, 785))
-    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (11, 11))
+    screen.blit(create_frame(200, 40, FRAME['hp']), (11, 11))
     screen.blit(resources_font_create('HP', player.hp, player.max_hp), (48, 15))
-    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (215, 11))
+    screen.blit(create_frame(200, 40, FRAME['gold_and_score']), (215, 11))
     screen.blit(resources_font_create('Gold', player.gold, '+∞'), (265, 15))
-    screen.blit(create_frame(300, 50, FRAME_RESOURCE), (630, 11))
+    screen.blit(create_frame(300, 50, FRAME['hp']), (630, 11))
     screen.blit(resources_font_create('base HP', tower.hp, tower.max_hp), (695, 15))
-    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (420, 11))
+    screen.blit(create_frame(200, 40, FRAME['hp']), (420, 11))
     screen.blit(resources_font_create('arrows', player.number_of_arrows, '+∞'), (450, 15))
-    screen.blit(create_frame(200, 40, FRAME_RESOURCE), (950, 11))
+    screen.blit(create_frame(200, 40, FRAME['gold_and_score']), (950, 11))
     screen.blit(resources_font_create('score', player.score, '+∞'), (990, 15))
 
 
 def all_hit_checks():
-    """check hit player"""
+    """All collision checks"""
     check_hit_player(players, zombies)
     check_theft(players, robbers)
-    """check hit enemy"""
     check_hit_enemy(zombies, swords)
     check_hit_enemy(zombies, arrows)
     check_hit_enemy(robbers, swords)
     check_hit_enemy(robbers, arrows)
     check_hit_enemy(npc_group, zombies)
-    """check hit tower"""
-    check_hit_tower(zombies, towers)
-    check_hit_tower(robbers, towers)
-    """check bonus"""
+    for z in zombies:
+        check_hit_tower(z, towers)
+    for r in robbers:
+        check_hit_tower(r, towers)
     check_collision_with_bonus(players, bonuses)
 
 
-def menu():
+def create_leaderboard_text():
+    """A function for outputting text from a database"""
+    y = 200
+    num = 1
+    for column in printsql():
+        text = ui.text(f'{num}. name: {column[0]} - score {column[1]}', leaderboard_font)
+        screen.blit(text, (500, y))
+        num += 1
+        y += 25
+    return y
+
+
+def pause(name):
+    """ Pause cycle function """
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+        sqlupdate(name, player.score)
         screen.blit(bg_menu, (0, 0))
-        screen.blit(name_game, (390, 200))
+        screen.blit(text_leaderboard, (500, 80))
+        y = create_leaderboard_text()
+        you_in_leaderboard = ui.text(f'you. name: {printsql_by_name(name)[0]} - score {printsql_by_name(name)[1]}',
+                                     leaderboard_font)
+        screen.blit(you_in_leaderboard, (500, y))
+        pause_ui.draw(screen)
+        pygame.display.flip()
+        if check_click(quit_button_for_pause):
+            exit()
+
+
+input_box = InputBox(560, 420, 50, 40, '')
+
+
+def menu():
+    """ Menu cycle function """
+    name = None
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if name == None:
+                name = input_box.handle_event(event)
+            else:
+                if pygame.mouse.get_pressed()[0]:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if input_box.rect.collidepoint(mouse_pos):
+                        name = input_box.handle_event(event)
+
+        screen.blit(bg_menu, (0, 0))
+        screen.blit(name_game, (430, 200))
         ui_menu_settings.draw(screen)
+        input_box.update()
+        input_box.draw(screen)
         pygame.display.flip()
         if check_click(start_game_button):
-            break
+            if name != None:
+                break
         if check_click(music_button):
             pygame.mixer.music.play(-1)
             pygame.mixer.music.set_volume(0.1)
         if check_click(quit_button):
             exit()
-    return True
+    return True, name
 
 
 def main():
+    """The main cycle of the game"""
     global zombie, robber, player
     while True:
         for event in pygame.event.get():
@@ -219,9 +282,9 @@ def main():
                 sys.exit()
             if event.type == create_zombie:
                 for i in range(6):
-                    zombie = create_object(Zombie, all_sprite, zombies, mob_hp['zombie'], mob_speed['zombie'])
+                    zombie = create_enemy(Zombie, all_sprite, zombies, mob_hp['zombie'], mob_speed['zombie'])
             if event.type == create_robber:
-                robber = create_object(Robber, all_sprite, robbers, mob_hp['robber'], mob_speed['robber'])
+                robber = create_enemy(Robber, all_sprite, robbers, mob_hp['robber'], mob_speed['robber'])
             if event.type == create_bonus:
                 bonus.rect.x, bonus.rect.y = random.randrange(1212), random.randrange(850)
             if event.type == score_update:
@@ -238,10 +301,15 @@ def main():
         create_ui_game()
         clock.tick(FPS)
         pygame.display.flip()
+        if player.hp <= 0 or tower.hp <= 0:
+            break
+    return True
 
 
 if __name__ == '__main__':
-    start_game = menu()
+    finish_game = True
+    start_game, name = menu()
     if start_game:
-        main()
-
+        finish_game = main()
+    if finish_game:
+        pause(name)
