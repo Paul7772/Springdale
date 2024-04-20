@@ -1,66 +1,47 @@
 import pygame
-import sys
 
 pygame.init()
-display = pygame.display.set_mode((400, 300))
+
+COLOR_INACTIVE = pygame.Color('lightskyblue3')
+COLOR_ACTIVE = pygame.Color('dodgerblue2')
+FONT = pygame.font.Font(None, 32)
 
 
-class TextInput():
-    def __init__(self, x, y, width=100, height=50, color=(10, 25, 8),
-                 bgcolor=(0, 255, 0), selectedColor=(0, 0, 255)):
-        super().__init__()
-        self.text_value = ""
-        self.isSelected = False
-        self.color = color
-        self.bgcolor = bgcolor
-        self.selectedColor = selectedColor
-        self.x = x
-        self.y = y
-        self.font = pygame.font.SysFont("Verdana", 20)
-        self.text = self.font.render(self.text_value, True, self.color)
-        self.bg = pygame.Rect(x, y, width, height)
+class InputBox:
+    """Class inputbox"""
 
-    def render(self, display):
-        self.pos = self.text.get_rect(center=(self.bg.x + self.bg.width / 2,
-                                              self.bg.y + self.bg.height / 2))
-        if self.isSelected:
-            pygame.draw.rect(display, self.selectedColor, self.bg)
-        else:
-            pygame.draw.rect(display, self.bgcolor, self.bg)
-        display.blit(self.text, self.pos)
+    def __init__(self, x, y, w, h, text):
+        self.rect = pygame.Rect(x, y, w, h)
+        self.color = COLOR_INACTIVE
+        self.text = text
+        self.txt_surface = FONT.render(text, True, self.color)
+        self.active = False
 
-    def update(self, event):
+    def handle_event(self, event):
+        """text input function"""
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.bg.collidepoint(event.pos):
-                self.isSelected = True
+            if self.rect.collidepoint(event.pos):
+                self.active = not self.active
             else:
-                self.isSelected = False
+                self.active = False
+            self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
         if event.type == pygame.KEYDOWN:
-            if self.isSelected:
+            if self.active:
                 if event.key == pygame.K_RETURN:
-                    return self.text_value  # Возвращаем введенный текст
+                    return_text = self.text
+                    self.text = ''
+                    return return_text
                 elif event.key == pygame.K_BACKSPACE:
-                    self.text_value = self.text_value[:-1]
+                    self.text = self.text[:-1]
                 else:
-                    self.text_value += event.unicode
-                self.text = self.font.render(self.text_value, True, self.color)
+                    self.text += event.unicode
+                self.txt_surface = FONT.render(self.text, True, self.color)
+
+    def update(self):
+        width = max(200, self.txt_surface.get_width() + 10)
+        self.rect.w = width
 
     def draw(self, screen):
-        text_surface = self.font.render(self.text_value, True, self.selectedColor)
-        screen.blit(text_surface, (self.x, self.y))
-
-
-text_input = TextInput(50, 50)
-
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        entered_text = text_input.update(event)
-        if entered_text:
-            print(entered_text)
-
-    display.fill((0,0,0))
-    text_input.draw(display)
-    pygame.display.flip()
+        """The function of drawing an object to the screen"""
+        screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))
+        pygame.draw.rect(screen, self.color, self.rect, 2)

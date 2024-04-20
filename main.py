@@ -82,10 +82,10 @@ mob_speed = {'zombie': 1,
              'robber': 2}
 
 """first zombie"""
-zombie = create_object(Zombie, all_sprite, zombies, mob_hp['zombie'], mob_speed['zombie'])
+zombie = create_enemy(Zombie, all_sprite, zombies, mob_hp['zombie'], mob_speed['zombie'])
 
 """First robber"""
-robber = create_object(Robber, all_sprite, robbers, mob_hp['robber'], mob_speed['robber'])
+robber = create_enemy(Robber, all_sprite, robbers, mob_hp['robber'], mob_speed['robber'])
 
 """Menu Settings"""
 name_game = ui.text('Springdale', name_font)
@@ -282,9 +282,9 @@ def main():
                 sys.exit()
             if event.type == create_zombie:
                 for i in range(6):
-                    zombie = create_object(Zombie, all_sprite, zombies, mob_hp['zombie'], mob_speed['zombie'])
+                    zombie = create_enemy(Zombie, all_sprite, zombies, mob_hp['zombie'], mob_speed['zombie'])
             if event.type == create_robber:
-                robber = create_object(Robber, all_sprite, robbers, mob_hp['robber'], mob_speed['robber'])
+                robber = create_enemy(Robber, all_sprite, robbers, mob_hp['robber'], mob_speed['robber'])
             if event.type == create_bonus:
                 bonus.rect.x, bonus.rect.y = random.randrange(1212), random.randrange(850)
             if event.type == score_update:

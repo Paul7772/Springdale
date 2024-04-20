@@ -40,7 +40,7 @@ def icon_weapon(player):
     return icon
 
 
-def create_object(classes, all_sprite, group, hp: int, speed):
+def create_enemy(classes, all_sprite, group, hp: int, speed):
     objects = classes(hp, speed)
     group.add(objects)
     all_sprite.add(objects)
@@ -48,4 +48,3 @@ def create_object(classes, all_sprite, group, hp: int, speed):
 
 
 list_weapon = ['sword', 'bow']
-

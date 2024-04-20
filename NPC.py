@@ -1,9 +1,12 @@
 import pygame
-from bow import Arrow
+from arrow import Arrow
+
 pygame.init()
 
 
 class NPC(pygame.sprite.Sprite):
+    """class npc"""
+
     def __init__(self, x, y, all_sprite, arrow_group):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('Sprite/Game/Npc/npc.png')
@@ -22,6 +25,7 @@ class NPC(pygame.sprite.Sprite):
                 self.can_arrow = True
 
     def create_arrow(self):
+        """function create arrow"""
         if self.can_arrow:
             self.can_arrow = False
             self.arrow_time = pygame.time.get_ticks()
@@ -35,4 +39,3 @@ class NPC(pygame.sprite.Sprite):
             self.kill()
         self.create_arrow()
         self.cooldown()
-

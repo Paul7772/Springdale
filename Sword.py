@@ -4,6 +4,8 @@ pygame.init()
 
 
 class Sword(pygame.sprite.Sprite):
+    """class sword"""
+
     def __init__(self, x, y, see):
         pygame.sprite.Sprite.__init__(self)
         self.list_image = ['Sprite/Game/Sword/Sword_left_right.png', 'Sprite/Game/Sword/Sword_up_down.png']
@@ -33,4 +35,3 @@ class Sword(pygame.sprite.Sprite):
         self.attack_duration_cooldown = 1000
 
         self.attack_duration_cooldown = 1000
-

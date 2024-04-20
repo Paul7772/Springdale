@@ -1,6 +1,6 @@
 from Settings import *
 from Sword import Sword
-import bow
+from arrow import Arrow
 from NPC import NPC
 
 pygame.init()
@@ -130,6 +130,7 @@ class Player(pygame.sprite.Sprite):
                 self.can_regeneration = False
 
     def create_sword(self):
+        """function create sword"""
         direction_map = {
             'left': (self.rect.midleft[0], self.rect.midleft[1]),
             'right': (self.rect.midright[0], self.rect.midright[1]),
@@ -144,16 +145,18 @@ class Player(pygame.sprite.Sprite):
             self.speed = 0
 
     def create_arrow(self):
+        """function create arrow"""
         if self.can_arrow:
             if self.number_of_arrows > 0:
                 self.can_arrow = False
                 self.arrow_time = pygame.time.get_ticks()
                 self.number_of_arrows -= 1
-                arrow = bow.Arrow(self.rect.x, self.rect.y + 40, self.rect.x, self.see)
+                arrow = Arrow(self.rect.x, self.rect.y + 40, self.rect.x, self.see)
                 self.arrow_group.add(arrow)
                 self.all_sprites.add(arrow)
 
     def create_npc(self):
+        """function create npc"""
         if self.can_npc_create:
             if self.npc_count <= 25:
                 if self.gold >= 65:
@@ -166,6 +169,7 @@ class Player(pygame.sprite.Sprite):
                     self.npc_count += 1
 
     def switch_weapon(self, keys):
+        """weapon change function"""
         if keys[pygame.K_q] and self.can_switch_weapon:
             self.can_switch_weapon = False
             self.weapon_switch_time = pygame.time.get_ticks()
