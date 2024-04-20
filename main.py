@@ -1,4 +1,5 @@
 import sys
+import pygame
 import Ui_menu as ui
 from Settings import *
 from bonus import Bonus
@@ -6,6 +7,7 @@ from database import sqlupdate, printsql, printsql_by_name
 from mobs import Zombie, Robber
 from player import Player
 from tower import Tower
+from InputBox import InputBox
 
 pygame.init()
 
@@ -87,13 +89,13 @@ robber = create_object(Robber, all_sprite, robbers, mob_hp['robber'], mob_speed[
 
 """Menu Settings"""
 name_game = ui.text('Springdale', name_font)
-start_game_button = ui.Button(660, 440, 'Sprite/Menu/start_button.png', 275, 100)
+start_game_button = ui.Button(660, 550, 'Sprite/Menu/start_button.png', 275, 100)
 ui_menu_settings.add(start_game_button)
 
 music_button = ui.Button(65, 65, 'Sprite/Menu/music_button.png', 100, 100)
 ui_menu_settings.add(music_button)
 
-quit_button = ui.Button(660, 550, 'Sprite/Menu/quit_button.png', 275, 100)
+quit_button = ui.Button(660, 660, 'Sprite/Menu/quit_button.png', 275, 100)
 ui_menu_settings.add(quit_button)
 
 """Pause settings"""
@@ -113,6 +115,7 @@ bonuses.add(bonus)
 
 
 def check_click(button):
+    """Checking the click on the button in the menu"""
     pos = pygame.mouse.get_pos()
     keys = pygame.mouse.get_pressed()
     if button.rect.collidepoint(pos):
@@ -123,6 +126,7 @@ def check_click(button):
 
 
 def check_collision_with_bonus(players1, bonuses1):
+    """ Checking the bonus selection """
     hit_list = pygame.sprite.groupcollide(players1, bonuses1, False, False)
     if hit_list:
         for obj1, obj2 in hit_list.items():
@@ -169,6 +173,7 @@ def check_hit_tower(enemy, towers1):
 
 
 def create_ui_game():
+    """Rendering the game interface"""
     screen.blit(create_frame(90, 90, FRAME['weapon']), (25, 780))
     screen.blit(icon_weapon(player), (30, 785))
     screen.blit(create_frame(200, 40, FRAME['hp']), (11, 11))
@@ -184,25 +189,23 @@ def create_ui_game():
 
 
 def all_hit_checks():
-    """check hit player"""
+    """All collision checks"""
     check_hit_player(players, zombies)
     check_theft(players, robbers)
-    """check hit enemy"""
     check_hit_enemy(zombies, swords)
     check_hit_enemy(zombies, arrows)
     check_hit_enemy(robbers, swords)
     check_hit_enemy(robbers, arrows)
     check_hit_enemy(npc_group, zombies)
-    """check hit tower"""
     for z in zombies:
         check_hit_tower(z, towers)
     for r in robbers:
         check_hit_tower(r, towers)
-    """check bonus"""
     check_collision_with_bonus(players, bonuses)
 
 
 def create_leaderboard_text():
+    """A function for outputting text from a database"""
     y = 200
     num = 1
     for column in printsql():
@@ -214,6 +217,7 @@ def create_leaderboard_text():
 
 
 def pause(name):
+    """ Pause cycle function """
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -232,39 +236,44 @@ def pause(name):
             exit()
 
 
-# input_box = InputBox(500, 750, 50, 70, '')
+input_box = InputBox(560, 420, 50, 40, '')
 
 
 def menu():
-    # name = None
+    """ Menu cycle function """
+    name = None
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            # if name == None:
-            #    name = input_box.handle_event(event)
-            # else:
-            #    pass
+            if name == None:
+                name = input_box.handle_event(event)
+            else:
+                if pygame.mouse.get_pressed()[0]:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if input_box.rect.collidepoint(mouse_pos):
+                        name = input_box.handle_event(event)
 
         screen.blit(bg_menu, (0, 0))
         screen.blit(name_game, (430, 200))
         ui_menu_settings.draw(screen)
-        # input_box.update()
-        # input_box.draw(screen)
+        input_box.update()
+        input_box.draw(screen)
         pygame.display.flip()
-
         if check_click(start_game_button):
-            break
+            if name != None:
+                break
         if check_click(music_button):
             pygame.mixer.music.play(-1)
             pygame.mixer.music.set_volume(0.1)
         if check_click(quit_button):
             exit()
-    return True
+    return True, name
 
 
 def main():
+    """The main cycle of the game"""
     global zombie, robber, player
     while True:
         for event in pygame.event.get():
@@ -299,8 +308,7 @@ def main():
 
 if __name__ == '__main__':
     finish_game = True
-    name = input('Write your nickname - ')
-    start_game = menu()
+    start_game, name = menu()
     if start_game:
         finish_game = main()
     if finish_game:
